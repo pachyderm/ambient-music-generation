@@ -1,6 +1,36 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
+const INPUTS = '/samples';
+const OUTPUTS = '/outputs';
+
+testThatOutputFolderIsWritable();
+
+const files = fs.readdirSync(INPUTS).filter(file => {
+  const ext = file.split('.').pop();
+  if ([
+    'wav',
+    'mp3',
+    'aif',
+    'aiff',
+  ].includes(ext)) {
+    return true;
+  }
+  console.warn(`Ignoring file ${file} as it does not appear to be an audio file.`);
+  return false;
+});
+
+if (files.length === 0) {
+  console.error(`
+    No files were found in the ${INPUTS} directory.
+
+    Confirm you correctly mounted a directory to ${INPUTS}.
+  `);
+  process.exit(1);
+}
+
+console.log(`Transcribing ${files.length} audio file${files.length === 1 ? '' : 's'}`);
+
 const html =`
 <html>
   <body>
@@ -44,19 +74,20 @@ const html =`
 
 (async () => {
   const browser = await puppeteer.launch({
-    // headless: true,
+    // headless: false,
     args: [
-      // '--headless',
-      // '--use-gl=desktop'
+      // Required for Docker version of Puppeteer
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      // This will write shared memory files into /tmp instead of /dev/shm,
+      // because Docker’s default for /dev/shm is 64MB
+      '--disable-dev-shm-usage'
     ],
-
-    // args: [
-    //   '--headless',
-    //   '--hide-scrollbars',
-    //   '--mute-audio'
-    // ]
   });
   const page = await browser.newPage();
+
+  // await testForWebGLSupport();
+
   page.on('console', msg => console.log('[PAGE]', msg.text()));
   const url = `data:text/html,${html.split('\n').filter(line => {
     if (!line) {
@@ -115,15 +146,56 @@ const html =`
     }, fs.readFileSync(file).toString('binary')), 'binary');
   };
 
-  const files = ['../audio/shortened samples/healing-short.wav', '../audio/shortened samples/brian eno.mp3'];
   for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    const data = await transcribeFile(file);
-    const outputPath = `outputs/${file.split('/').pop()}.mid`;
-    console.log(`transcribed file, writing to disk at ${outputPath}`);
-    fs.writeFileSync(outputPath, data);
+    try {
+      const file = files[i];
+      console.log(`Transcribing file ${file} ...`);
+      const file_path = `${INPUTS}/${file}`;
+      const data = await transcribeFile(file_path);
+      const outputPath = `${OUTPUTS}/${file.split('/').pop()}.mid`;
+      console.log(`Transcription successful, writing to disk at ${outputPath}`);
+      fs.writeFileSync(outputPath, data);
+    } catch(err) {
+      console.error(err);
+    }
   }
   console.log('[MAIN] done');
 
   await browser.close();
 })();
+
+function testThatOutputFolderIsWritable () {
+  const path = `test-${Math.random()}`;
+  const outputPath = `${OUTPUTS}/path`;
+  const expected = 'test content';
+  fs.writeFileSync(outputPath, expected, 'utf-8');
+  try {
+    const contents = fs.readFileSync(outputPath, 'utf-8');
+
+    // allow loose equality
+    if (contents != expected) {
+      console.error(`Could not write to output path ${OUTPUTS}. The written file did not match.\n\nExpected: ${expected}\n\nReceived: ${contents}`);
+      process.exit(1);
+    }
+  } catch(err) {
+    console.error(`Could not write to output path ${OUTPUTS}. Error was:`)
+    console.error(err.stack);
+    process.exit(1);
+  }
+};
+
+// https://github.com/puppeteer/puppeteer/issues/1260#issue-270736774
+async function testForWebGLSupport(page) {
+  const webgl = await page.evaluate(() => {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl');
+    const expGl = canvas.getContext('experimental-webgl');
+
+    return {
+      gl: gl && gl instanceof WebGLRenderingContext,
+      expGl: expGl && expGl instanceof WebGLRenderingContext,
+    };
+  });
+
+  console.log('WebGL Support:', webgl);
+}

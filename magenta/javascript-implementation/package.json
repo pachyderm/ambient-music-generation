@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "transcribe": "node src/index.js"
+  },
+  "dependencies": {
+    "puppeteer": "2.0.0"
+  }
+}
