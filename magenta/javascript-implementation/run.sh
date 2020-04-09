@@ -5,4 +5,10 @@
 
 docker build -t pachyderm-magenta-js .
 
-docker run --name pachyderm-magenta-js --rm -v $(pwd)/src:/code/src -v $(pwd)/../../audio/samples/:/samples -v $(pwd)/outputs:/outputs pachyderm-magenta-js
+docker run \
+  --name pachyderm-magenta-js \
+  --rm \
+  -v $(pwd)/src:/code/src \
+  -v $(pwd)/../../audio/samples/:/samples \
+  -v $(pwd)/outputs:/outputs \
+  pachyderm-magenta-js
