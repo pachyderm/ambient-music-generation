@@ -1,0 +1,20 @@
+{
+  "scripts": {
+    "test-it": "test-it"
+  },
+  "dependencies": {
+    "@magenta/music": "^1.14.0",
+    "@tensorflow/tfjs-node": "^1.7.2",
+    "buffer": "^5.5.0",
+    "filereader": "^0.10.3",
+    "gl": "^4.4.1",
+    "puppeteer": "2.0.0",
+    "speaker": "^0.5.1",
+    "web-audio-api": "^0.2.2",
+    "window": "^4.2.7"
+  },
+  "devDependencies": {
+    "@test-it/cli": "^0.6.4",
+    "@test-it/core": "^0.6.4"
+  }
+}
