@@ -1,4 +1,4 @@
-console.log('v8')
+console.log('v8.18')
 
 const puppeteer = require('puppeteer');
 const fs = require('fs');
@@ -146,7 +146,7 @@ const transcribeFile = async (file) => {
   await page.evaluate(async (input) => {
     console.log('got binary data', input);
   }, 'bar');
-  console.log(`[MAIN] read binary data on disk. Size is: ${binaryDataOnDisk.length}`);
+  console.log(`[MAIN] read binary data on disk. Size is: ${getSize(binaryDataOnDisk.length)}`);
   await page.evaluate(async (input) => {
     console.log('the binary data is', input);
   }, binaryDataOnDisk);
@@ -199,7 +199,7 @@ async function testForWebGLSupport(page) {
   console.log('WebGL Support:', webgl);
 }
 
-const size = (size) => {
+const getSize = (size) => {
   if (size > 1024 / 1024 / 1024) {
     return `${size / 1024 / 1024 / 1024}gb`;
   }

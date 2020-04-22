@@ -8,7 +8,7 @@
       "sh",
       "/code/yarn-transcribe.sh"
     ],
-    "image": "hitheory/dev-midi-transcriber-dj:v8.16"
+    "image": "hitheory/dev-midi-transcriber-dj:v8.18"
   },
   "input": {
     "pfs": {
