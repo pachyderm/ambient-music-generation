@@ -88,7 +88,7 @@ const transcribeFile = async (filepath) => {
 
   // await testForWebGLSupport();
 
-  page.on('console', msg => console.log('[PAGE]', msg.text()));
+  // page.on('console', msg => console.log('[PAGE]', msg.text()));
   const url = `data:text/html,${html.split('\n').filter(line => {
     if (!line) {
       return false;
@@ -106,7 +106,7 @@ const transcribeFile = async (filepath) => {
   await page.evaluate(() => new Promise(resolve => {
     window.initialized = resolve;
   }), []);
-  console.log('[MAIN] initialized');
+  // console.log('[MAIN] initialized');
 
   const transcribeFile = async file => {
     console.log(`[MAIN] begin transcribing file ${file}`);
@@ -120,9 +120,9 @@ const transcribeFile = async (filepath) => {
     return Buffer.from(await page.evaluate(async (s) => {
       const incomingData = window.buffer.Buffer.from(s, 'binary');
       const ns = await model.transcribeFromAudioFile(new Blob([incomingData]));
-      console.log('got ns, sequencing proto to midi');
+      // console.log('got ns, sequencing proto to midi');
       const data = mm.sequenceProtoToMidi(ns);
-      console.log('transcribed successfully, calling back data');
+      // console.log('transcribed successfully, calling back data');
       function ArrayBufferToString(buffer) {
         return BinaryToString(String.fromCharCode.apply(null, Array.prototype.slice.apply(new Uint8Array(buffer))));
       }
@@ -151,7 +151,7 @@ const transcribeFile = async (filepath) => {
   const outputPath = `${OUTPUTS}/${file.split('/').pop()}.mid`;
   console.log(`Transcription successful, writing to disk at ${outputPath}`);
   fs.writeFileSync(outputPath, data);
-  console.log('[MAIN] done');
+  // console.log('[MAIN] done');
 
   await browser.close();
 };
