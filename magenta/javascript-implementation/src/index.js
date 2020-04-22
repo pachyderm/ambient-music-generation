@@ -1,4 +1,4 @@
-console.log('v8.18')
+console.log('v8.19')
 
 const puppeteer = require('puppeteer');
 const fs = require('fs');
@@ -200,13 +200,13 @@ async function testForWebGLSupport(page) {
 }
 
 const getSize = (size) => {
-  if (size > 1024 / 1024 / 1024) {
+  if (size / 1024 / 1024 / 1024 > 1) {
     return `${size / 1024 / 1024 / 1024}gb`;
   }
-  if (size > 1024 / 1024) {
+  if (size / 1024 / 1024 > 1) {
     return `${size / 1024 / 1024}mb`;
   }
-  if (size > 1024) {
+  if (size / 1024 > 1) {
     return `${size / 1024}kb`;
   }
   return `${size}b`;
