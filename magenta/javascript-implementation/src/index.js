@@ -1,11 +1,12 @@
+console.log('v8')
+
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
 const INPUTS = '/pfs/dev-audio-processed-wav';
 const OUTPUTS = '/pfs/out';
 
-// testThatOutputFolderIsWritable();
-
+console.log(`Reading files from ${INPUTS}`);
 const files = fs.readdirSync(INPUTS).filter(file => {
   const ext = file.split('.').pop();
   if ([
@@ -29,7 +30,7 @@ if (files.length === 0) {
   process.exit(1);
 }
 
-console.log(`Transcribing ${files.length} audio file${files.length === 1 ? '' : 's'}`);
+console.log(`Transcribing ${files.length} audio file${files.length === 1 ? '' : 's'}. Payload: ${JSON.stringify(files)}`);
 
 const html =`
 <html>
@@ -54,12 +55,10 @@ const html =`
       let model;
 
       async function main() {
-        await Promise.all([
-          addScript("https://cdn.jsdelivr.net/npm/@magenta/music@1.2"),
-          addScript("https://bundle.run/buffer@5.5.0"),
-        ]);
+        console.log('page main');
 
         const context = new AudioContext();
+        console.log('context made');
 
         model = new mm.OnsetsAndFrames('https://storage.googleapis.com/magentadata/js/checkpoints/transcription/onsets_frames_uni');
         console.log('initializing model');
@@ -67,62 +66,6 @@ const html =`
         callback(window.initialized);
       }
 
-    </script>
-  </body>
-</html>
-`;
-
-const transcribeFile = async (filepath) => {
-  const browser = await puppeteer.launch({
-    // headless: false,
-    args: [
-      // Required for Docker version of Puppeteer
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      // This will write shared memory files into /tmp instead of /dev/shm,
-      // because Docker’s default for /dev/shm is 64MB
-      '--disable-dev-shm-usage'
-    ],
-  });
-  const page = await browser.newPage();
-
-  // await testForWebGLSupport();
-
-  // page.on('console', msg => console.log('[PAGE]', msg.text()));
-  const url = `data:text/html,${html.split('\n').filter(line => {
-    if (!line) {
-      return false;
-    }
-    if (line.startsWith('//')) {
-      return false;
-    }
-    return true;
-  }).join('\n')}`;
-  await page.goto(url);
-
-  await page.waitForSelector('#btn');
-  const btn = await page.$('#btn');
-  btn.click();
-  await page.evaluate(() => new Promise(resolve => {
-    window.initialized = resolve;
-  }), []);
-  // console.log('[MAIN] initialized');
-
-  const transcribeFile = async file => {
-    console.log(`[MAIN] begin transcribing file ${file}`);
-
-    // // https://github.com/puppeteer/puppeteer/issues/2427#issuecomment-536002538
-    // return await Buffer.from(page.evaluate(async (s) => {
-    //   const bufferedData = window.buffer.Buffer(s, 'binary');
-    //   return bufferedData.toString('binary');
-    // }, fs.readFileSync(file).toString('binary')));
-
-    return Buffer.from(await page.evaluate(async (s) => {
-      const incomingData = window.buffer.Buffer.from(s, 'binary');
-      const ns = await model.transcribeFromAudioFile(new Blob([incomingData]));
-      // console.log('got ns, sequencing proto to midi');
-      const data = mm.sequenceProtoToMidi(ns);
-      // console.log('transcribed successfully, calling back data');
       function ArrayBufferToString(buffer) {
         return BinaryToString(String.fromCharCode.apply(null, Array.prototype.slice.apply(new Uint8Array(buffer))));
       }
@@ -142,16 +85,89 @@ const transcribeFile = async (filepath) => {
         }
       }
 
-      return ArrayBufferToString(data);
-    }, fs.readFileSync(file).toString('binary')), 'binary');
-  };
+    </script>
+  </body>
+</html>
+`;
 
-  console.log(`Transcribing file ${filepath} ...`);
-  const data = await transcribeFile(`${INPUTS}/${filepath}`);
+const transcribeFile = async (file) => {
+  console.log(`Transcribe the following file: ${file}`);
+  const browser = await puppeteer.launch({
+    // headless: false,
+    args: [
+      // Required for Docker version of Puppeteer
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+
+      // This will write shared memory files into /tmp instead of /dev/shm,
+      // because Docker’s default for /dev/shm is 64MB
+      '--disable-dev-shm-usage'
+    ],
+  });
+  console.log('Puppeteer launched');
+  const page = await browser.newPage();
+
+  page.on('console', msg => {
+    if (!msg.text().includes('This browser does not support WebGL')) {
+      console.log('[PAGE]', msg.text());
+    }
+  });
+  const url = `data:text/html,${html.split('\n').filter(line => {
+    if (!line) {
+      return false;
+    }
+    if (line.startsWith('//')) {
+      return false;
+    }
+    return true;
+  }).join('\n')}`;
+  await page.goto(url);
+  await page.addScriptTag({ url: "https://cdn.jsdelivr.net/npm/@magenta/music@1.2" });
+  await page.addScriptTag({ url: "https://cdn.jsdelivr.net/npm/buffer@5.6.0/index.min.js" });
+  console.log('Launched page');
+
+  await page.waitForSelector('#btn');
+  console.log('Found #btn');
+  const btn = await page.$('#btn');
+  console.log('Got #btn element');
+  btn.click();
+  console.log('Clicked button');
+  await page.evaluate(() => new Promise(resolve => {
+    window.initialized = resolve;
+  }), []);
+  console.log('[MAIN] initialized');
+
+  console.log(`[MAIN] begin transcribing file ${file}`);
+
+  await page.evaluate(async (input) => {
+    console.log('begin to get binary data', input);
+  }, 'foo');
+  const binaryDataOnDisk = fs.readFileSync(`${INPUTS}/${file}`).toString('binary');
+  await page.evaluate(async (input) => {
+    console.log('got binary data', input);
+  }, 'bar');
+  console.log(`[MAIN] read binary data on disk. Size is: ${binaryDataOnDisk.length}`);
+  await page.evaluate(async (input) => {
+    console.log('the binary data is', input);
+  }, binaryDataOnDisk);
+  console.log(`[MAIN] continue`);
+  const bufferedData = await page.evaluate(async (s) => {
+    console.log('Begin to read buffered data');
+    const incomingData = window.buffer.Buffer.from(s, 'binary');
+    console.log('model transcribe from audio file');
+    const ns = await model.transcribeFromAudioFile(new Blob([incomingData]));
+    console.log('go ns, sequent to midi');
+    const data = mm.sequenceProtoToMidi(ns);
+    console.log('transcribed successfully, calling back data');
+    console.log('return to string');
+    return ArrayBufferToString(data);
+  }, binaryDataOnDisk);
+  console.log('Got data from transcribe');
+  const transcribedData = Buffer.from(bufferedData, 'binary');
   const outputPath = `${OUTPUTS}/${file.split('/').pop()}.mid`;
   console.log(`Transcription successful, writing to disk at ${outputPath}`);
-  fs.writeFileSync(outputPath, data);
-  // console.log('[MAIN] done');
+  fs.writeFileSync(outputPath, transcribedData);
+  console.log('[MAIN] done, browser is closing');
 
   await browser.close();
 };
@@ -166,26 +182,6 @@ const transcribeFile = async (filepath) => {
     }
   }
 })();
-
-// function testThatOutputFolderIsWritable () {
-//   const path = `test-${Math.random()}`;
-//   const outputPath = `${OUTPUTS}/path`;
-//   const expected = 'test content';
-//   fs.writeFileSync(outputPath, expected, 'utf-8');
-//   try {
-//     const contents = fs.readFileSync(outputPath, 'utf-8');
-
-//     // allow loose equality
-//     if (contents != expected) {
-//       console.error(`Could not write to output path ${OUTPUTS}. The written file did not match.\n\nExpected: ${expected}\n\nReceived: ${contents}`);
-//       process.exit(1);
-//     }
-//   } catch(err) {
-//     console.error(`Could not write to output path ${OUTPUTS}. Error was:`)
-//     console.error(err.stack);
-//     process.exit(1);
-//   }
-// };
 
 // https://github.com/puppeteer/puppeteer/issues/1260#issue-270736774
 async function testForWebGLSupport(page) {
@@ -202,3 +198,16 @@ async function testForWebGLSupport(page) {
 
   console.log('WebGL Support:', webgl);
 }
+
+const size = (size) => {
+  if (size > 1024 / 1024 / 1024) {
+    return `${size / 1024 / 1024 / 1024}gb`;
+  }
+  if (size > 1024 / 1024) {
+    return `${size / 1024 / 1024}mb`;
+  }
+  if (size > 1024) {
+    return `${size / 1024}kb`;
+  }
+  return `${size}b`;
+};

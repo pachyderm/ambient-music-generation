@@ -3,6 +3,7 @@
     "transcribe": "node src/index.js"
   },
   "dependencies": {
-    "puppeteer": "2.0.0"
+    "puppeteer": "2.0.0",
+    "yargs": "^15.3.1"
   }
 }
