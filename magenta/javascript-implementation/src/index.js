@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
-const INPUTS = '/pfs/test-wav';
+const INPUTS = '/pfs/dev-audio-processed-wav';
 const OUTPUTS = '/pfs/out';
 
 // testThatOutputFolderIsWritable();
