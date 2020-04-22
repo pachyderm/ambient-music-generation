@@ -1,10 +1,10 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
-const INPUTS = '/samples';
-const OUTPUTS = '/outputs';
+const INPUTS = '/pfs/test-wav';
+const OUTPUTS = '/pfs/out';
 
-testThatOutputFolderIsWritable();
+// testThatOutputFolderIsWritable();
 
 const files = fs.readdirSync(INPUTS).filter(file => {
   const ext = file.split('.').pop();
@@ -72,7 +72,7 @@ const html =`
 </html>
 `;
 
-(async () => {
+const transcribeFile = async (filepath) => {
   const browser = await puppeteer.launch({
     // headless: false,
     args: [
@@ -146,43 +146,46 @@ const html =`
     }, fs.readFileSync(file).toString('binary')), 'binary');
   };
 
-  for (let i = 0; i < files.length; i++) {
-    try {
-      const file = files[i];
-      console.log(`Transcribing file ${file} ...`);
-      const file_path = `${INPUTS}/${file}`;
-      const data = await transcribeFile(file_path);
-      const outputPath = `${OUTPUTS}/${file.split('/').pop()}.mid`;
-      console.log(`Transcription successful, writing to disk at ${outputPath}`);
-      fs.writeFileSync(outputPath, data);
-    } catch(err) {
-      console.error(err);
-    }
-  }
+  console.log(`Transcribing file ${filepath} ...`);
+  const data = await transcribeFile(`${INPUTS}/${filepath}`);
+  const outputPath = `${OUTPUTS}/${file.split('/').pop()}.mid`;
+  console.log(`Transcription successful, writing to disk at ${outputPath}`);
+  fs.writeFileSync(outputPath, data);
   console.log('[MAIN] done');
 
   await browser.close();
+};
+
+(async () => {
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    try {
+      await transcribeFile(file);
+    } catch(err) {
+      console.error('Error transcribing file', err);
+    }
+  }
 })();
 
-function testThatOutputFolderIsWritable () {
-  const path = `test-${Math.random()}`;
-  const outputPath = `${OUTPUTS}/path`;
-  const expected = 'test content';
-  fs.writeFileSync(outputPath, expected, 'utf-8');
-  try {
-    const contents = fs.readFileSync(outputPath, 'utf-8');
+// function testThatOutputFolderIsWritable () {
+//   const path = `test-${Math.random()}`;
+//   const outputPath = `${OUTPUTS}/path`;
+//   const expected = 'test content';
+//   fs.writeFileSync(outputPath, expected, 'utf-8');
+//   try {
+//     const contents = fs.readFileSync(outputPath, 'utf-8');
 
-    // allow loose equality
-    if (contents != expected) {
-      console.error(`Could not write to output path ${OUTPUTS}. The written file did not match.\n\nExpected: ${expected}\n\nReceived: ${contents}`);
-      process.exit(1);
-    }
-  } catch(err) {
-    console.error(`Could not write to output path ${OUTPUTS}. Error was:`)
-    console.error(err.stack);
-    process.exit(1);
-  }
-};
+//     // allow loose equality
+//     if (contents != expected) {
+//       console.error(`Could not write to output path ${OUTPUTS}. The written file did not match.\n\nExpected: ${expected}\n\nReceived: ${contents}`);
+//       process.exit(1);
+//     }
+//   } catch(err) {
+//     console.error(`Could not write to output path ${OUTPUTS}. Error was:`)
+//     console.error(err.stack);
+//     process.exit(1);
+//   }
+// };
 
 // https://github.com/puppeteer/puppeteer/issues/1260#issue-270736774
 async function testForWebGLSupport(page) {
