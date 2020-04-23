@@ -1,10 +1,23 @@
-console.log('v8.19')
-
-const puppeteer = require('puppeteer');
-const fs = require('fs');
+console.log('v9')
 
 const INPUTS = '/pfs/dev-audio-processed-wav';
 const OUTPUTS = '/pfs/out';
+
+const express = require('express');
+const puppeteer = require('puppeteer');
+const fs = require('fs');
+
+const startExpressServer = () => {
+  const app = express();
+  const port = 3000;
+
+  app.use(express.static(INPUTS));
+
+  const server = app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
+  return server;
+};
+
+const app = startExpressServer();
 
 console.log(`Reading files from ${INPUTS}`);
 const files = fs.readdirSync(INPUTS).filter(file => {
@@ -32,65 +45,70 @@ if (files.length === 0) {
 
 console.log(`Transcribing ${files.length} audio file${files.length === 1 ? '' : 's'}. Payload: ${JSON.stringify(files)}`);
 
-const html =`
-<html>
-  <body>
-    <button id="btn" onclick="main()">Start</button>
-    <script>
-      const addScript = (src) => new Promise(resolve => {
-        var s = document.createElement( 'script' );
-        s.setAttribute( 'src', src );
-        s.onload=resolve;
-        document.body.appendChild( s );
-      });
+const getHtml = (filepath) => {
+  const html =`
+  <html>
+    <body>
+      <button id="btn" onclick="main()">Start</button>
+      <input type="file" id="input" />
+      <script>
+        console.log('filepath', '${filepath}');
+        const addScript = (src) => new Promise(resolve => {
+          var s = document.createElement( 'script' );
+          s.setAttribute( 'src', src );
+          s.onload=resolve;
+          document.body.appendChild( s );
+        });
 
-      const callback = (fn, ...data) => {
-        if (fn) {
-          fn(...data);
-        } else {
-          throw new Error('No callback function could be found.');
-        }
-      };
-
-      let model;
-
-      async function main() {
-        console.log('page main');
-
-        const context = new AudioContext();
-        console.log('context made');
-
-        model = new mm.OnsetsAndFrames('https://storage.googleapis.com/magentadata/js/checkpoints/transcription/onsets_frames_uni');
-        console.log('initializing model');
-        await model.initialize();
-        callback(window.initialized);
-      }
-
-      function ArrayBufferToString(buffer) {
-        return BinaryToString(String.fromCharCode.apply(null, Array.prototype.slice.apply(new Uint8Array(buffer))));
-      }
-
-      function BinaryToString(binary) {
-        var error;
-
-        try {
-          return decodeURIComponent(escape(binary));
-        } catch (_error) {
-          error = _error;
-          if (error instanceof URIError) {
-            return binary;
+        const callback = (fn, ...data) => {
+          if (fn) {
+            fn(...data);
           } else {
-            throw error;
+            throw new Error('No callback function could be found.');
+          }
+        };
+
+        let model;
+
+        async function main() {
+          console.log('page main');
+
+          const context = new AudioContext();
+          console.log('context made');
+
+          model = new mm.OnsetsAndFrames('https://storage.googleapis.com/magentadata/js/checkpoints/transcription/onsets_frames_uni');
+          console.log('initializing model');
+          await model.initialize();
+          callback(window.initialized);
+        }
+
+        function ArrayBufferToString(buffer) {
+          return BinaryToString(String.fromCharCode.apply(null, Array.prototype.slice.apply(new Uint8Array(buffer))));
+        }
+
+        function BinaryToString(binary) {
+          var error;
+
+          try {
+            return decodeURIComponent(escape(binary));
+          } catch (_error) {
+            error = _error;
+            if (error instanceof URIError) {
+              return binary;
+            } else {
+              throw error;
+            }
           }
         }
-      }
-
-    </script>
-  </body>
-</html>
-`;
+      </script>
+    </body>
+  </html>
+  `;
+  return html;
+};
 
 const transcribeFile = async (file) => {
+  const filepath = `${INPUTS}/${file}`;
   console.log(`Transcribe the following file: ${file}`);
   const browser = await puppeteer.launch({
     // headless: false,
@@ -101,7 +119,12 @@ const transcribeFile = async (file) => {
 
       // This will write shared memory files into /tmp instead of /dev/shm,
       // because Docker’s default for /dev/shm is 64MB
-      '--disable-dev-shm-usage'
+      '--disable-dev-shm-usage',
+
+      // testing
+      '--unlimited-storage',
+      '--force-gpu-mem-available-mb',
+      '--full-memory-crash-report',
     ],
   });
   console.log('Puppeteer launched');
@@ -112,7 +135,7 @@ const transcribeFile = async (file) => {
       console.log('[PAGE]', msg.text());
     }
   });
-  const url = `data:text/html,${html.split('\n').filter(line => {
+  const url = `data:text/html,${getHtml(filepath).split('\n').filter(line => {
     if (!line) {
       return false;
     }
@@ -139,34 +162,63 @@ const transcribeFile = async (file) => {
 
   console.log(`[MAIN] begin transcribing file ${file}`);
 
-  await page.evaluate(async (input) => {
-    console.log('begin to get binary data', input);
-  }, 'foo');
-  const binaryDataOnDisk = fs.readFileSync(`${INPUTS}/${file}`).toString('binary');
-  await page.evaluate(async (input) => {
-    console.log('got binary data', input);
-  }, 'bar');
-  console.log(`[MAIN] read binary data on disk. Size is: ${getSize(binaryDataOnDisk.length)}`);
-  await page.evaluate(async (input) => {
-    console.log('the binary data is', input);
-  }, binaryDataOnDisk);
+  // const binaryDataOnDisk = fs.readFileSync(filepath).toString('binary');
+  // console.log(`[MAIN] read binary data on disk. Size is: ${getSize(binaryDataOnDisk.length)}`);
+  await page.evaluate(async (filepath) => {
+    console.log('inner filepath', filepath);
+    const resp = await fetch(filepath);
+    console.log('got resp back', resp);
+    // var oReq = new XMLHttpRequest();
+    // oReq.open("GET", "/myfile.png", true);
+    // oReq.responseType = "blob";
+
+    // oReq.onload = function(oEvent) {
+    //   var blob = oReq.response;
+    //   // ...
+    // };
+
+    // oReq.send();
+    //
+    //
+    // function checkStatus(response) {
+    //   if (!response.ok) {
+    //     throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+    //   }
+    //   return response;
+    // }
+    //
+    // try {
+    //   const resp = await fetch(filepath);
+    //   const buffer = await checkStatus(response) && response.arrayBuffer();
+    //   console.log('buffer', buffer);
+    // } catch(err) {
+    //   console.error('Error parsing buffer', err);
+    // }
+  }, filepath);
+  // await page.evaluate(async (input) => {
+  //   console.log('the binary data is', input);
+  // }, binaryDataOnDisk);
   console.log(`[MAIN] continue`);
-  const bufferedData = await page.evaluate(async (s) => {
-    console.log('Begin to read buffered data');
-    const incomingData = window.buffer.Buffer.from(s, 'binary');
-    console.log('model transcribe from audio file');
-    const ns = await model.transcribeFromAudioFile(new Blob([incomingData]));
-    console.log('go ns, sequent to midi');
-    const data = mm.sequenceProtoToMidi(ns);
-    console.log('transcribed successfully, calling back data');
-    console.log('return to string');
-    return ArrayBufferToString(data);
-  }, binaryDataOnDisk);
-  console.log('Got data from transcribe');
-  const transcribedData = Buffer.from(bufferedData, 'binary');
-  const outputPath = `${OUTPUTS}/${file.split('/').pop()}.mid`;
-  console.log(`Transcription successful, writing to disk at ${outputPath}`);
-  fs.writeFileSync(outputPath, transcribedData);
+  // const inputUploadHandle = await page.$('input[type=file]');
+  // inputUploadHandle.uploadFile(filepath);
+
+
+  // const bufferedData = await page.evaluate(async (s) => {
+  //   console.log('Begin to read buffered data');
+  //   const incomingData = window.buffer.Buffer.from(s, 'binary');
+  //   console.log('model transcribe from audio file');
+  //   const ns = await model.transcribeFromAudioFile(new Blob([incomingData]));
+  //   console.log('go ns, sequent to midi');
+  //   const data = mm.sequenceProtoToMidi(ns);
+  //   console.log('transcribed successfully, calling back data');
+  //   console.log('return to string');
+  //   return ArrayBufferToString(data);
+  // }, binaryDataOnDisk);
+  // console.log('Got data from transcribe');
+  // const transcribedData = Buffer.from(bufferedData, 'binary');
+  // const outputPath = `${OUTPUTS}/${file.split('/').pop()}.mid`;
+  // console.log(`Transcription successful, writing to disk at ${outputPath}`);
+  // fs.writeFileSync(outputPath, transcribedData);
   console.log('[MAIN] done, browser is closing');
 
   await browser.close();
@@ -181,6 +233,8 @@ const transcribeFile = async (file) => {
       console.error('Error transcribing file', err);
     }
   }
+  app.close();
+  process.exit();
 })();
 
 // https://github.com/puppeteer/puppeteer/issues/1260#issue-270736774
@@ -197,7 +251,7 @@ async function testForWebGLSupport(page) {
   });
 
   console.log('WebGL Support:', webgl);
-}
+};
 
 const getSize = (size) => {
   if (size / 1024 / 1024 / 1024 > 1) {

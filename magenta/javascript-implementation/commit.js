@@ -39,6 +39,7 @@ const updateScript = (target) => {
   await updateScript('./src/index.js');
 
   await exec(`docker cp src/index.js ${docker_name}:/code/src/index.js`)
+  await exec(`docker cp package.json ${docker_name}:/code/package.json`)
   await exec(`docker commit -m "Update transcription src" ${docker_name} hitheory/dev-midi-transcriber-dj:${version}`);
   await exec(`docker push hitheory/dev-midi-transcriber-dj:${version}`)
 

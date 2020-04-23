@@ -3,6 +3,7 @@
     "transcribe": "node src/index.js"
   },
   "dependencies": {
+    "express": "^4.17.1",
     "puppeteer": "2.0.0",
     "yargs": "^15.3.1"
   }
