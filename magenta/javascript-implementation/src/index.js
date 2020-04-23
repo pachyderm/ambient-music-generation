@@ -55,15 +55,8 @@ const getHtml = (filepath) => {
   <html>
     <body>
       <button id="btn" onclick="main()">Start</button>
-      <input type="file" id="input" />
       <script>
         console.log('filepath', '${filepath}');
-        const addScript = (src) => new Promise(resolve => {
-          var s = document.createElement( 'script' );
-          s.setAttribute( 'src', src );
-          s.onload=resolve;
-          document.body.appendChild( s );
-        });
 
         const callback = (fn, ...data) => {
           if (fn) {
@@ -152,14 +145,13 @@ const transcribeFile = async (file) => {
   await page.goto(url);
   await page.addScriptTag({ url: "https://cdn.jsdelivr.net/npm/@magenta/music@1.2" });
   await page.addScriptTag({ url: "https://cdn.jsdelivr.net/npm/buffer@5.6.0/index.min.js" });
-  console.log('Launched page');
+  // await page.evaluate(() => {
+  //   tf.setBackend('cpu');
+  // });
 
   await page.waitForSelector('#btn');
-  console.log('Found #btn');
   const btn = await page.$('#btn');
-  console.log('Got #btn element');
   btn.click();
-  console.log('Clicked button');
   await page.evaluate(() => new Promise(resolve => {
     window.initialized = resolve;
   }), []);
@@ -167,7 +159,10 @@ const transcribeFile = async (file) => {
 
   console.log(`[MAIN] begin transcribing file ${file}`);
 
-  await page.evaluate(async (file) => {
+  const binaryDataOnDiskAsString = fs.readFileSync(filepath).toString('binary');
+  const bytes = Buffer.byteLength(binaryDataOnDiskAsString, 'utf8');
+  console.log(`[MAIN] read binary data on disk. Size is: ${getSize(bytes)}`);
+  const bufferedData = await page.evaluate(async (file) => {
     try {
       const resp = await fetch(`http://localhost:3000/${file}`);
       if (!resp.ok) {
@@ -209,30 +204,14 @@ const transcribeFile = async (file) => {
     }
     //
   }, file);
-  // await page.evaluate(async (input) => {
-  //   console.log('the binary data is', input);
-  // }, binaryDataOnDisk);
-  console.log(`[MAIN] continue`);
-  // const inputUploadHandle = await page.$('input[type=file]');
-  // inputUploadHandle.uploadFile(filepath);
+  // console.log(`[MAIN] continue`);
 
 
-  // const bufferedData = await page.evaluate(async (s) => {
-  //   console.log('Begin to read buffered data');
-  //   const incomingData = window.buffer.Buffer.from(s, 'binary');
-  //   console.log('model transcribe from audio file');
-  //   const ns = await model.transcribeFromAudioFile(new Blob([incomingData]));
-  //   console.log('go ns, sequent to midi');
-  //   const data = mm.sequenceProtoToMidi(ns);
-  //   console.log('transcribed successfully, calling back data');
-  //   console.log('return to string');
-  //   return ArrayBufferToString(data);
-  // }, binaryDataOnDisk);
-  // console.log('Got data from transcribe');
-  // const transcribedData = Buffer.from(bufferedData, 'binary');
-  // const outputPath = `${OUTPUTS}/${file.split('/').pop()}.mid`;
-  // console.log(`Transcription successful, writing to disk at ${outputPath}`);
-  // fs.writeFileSync(outputPath, transcribedData);
+  console.log('[MAIN] Got data from transcribe');
+  const transcribedData = Buffer.from(bufferedData, 'binary');
+  const outputPath = `${OUTPUTS}/${file.split('/').pop()}.mid`;
+  console.log(`Transcription successful, writing to disk at ${outputPath}`);
+  fs.writeFileSync(outputPath, transcribedData);
   console.log('[MAIN] done, browser is closing');
 
   await browser.close();
