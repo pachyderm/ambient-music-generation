@@ -1,16 +1,21 @@
-console.log('v9')
+console.log('v9.1')
 
 const INPUTS = '/pfs/dev-audio-processed-wav';
 const OUTPUTS = '/pfs/out';
 
 const express = require('express');
+const cors = require('cors');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
 const startExpressServer = () => {
   const app = express();
   const port = 3000;
+  app.use(cors());
 
+  app.get('/foo', (req, res) => {
+    res.json({ foo: 'foo' });
+  });
   app.use(express.static(INPUTS));
 
   const server = app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
@@ -158,16 +163,32 @@ const transcribeFile = async (file) => {
   await page.evaluate(() => new Promise(resolve => {
     window.initialized = resolve;
   }), []);
-  console.log('[MAIN] initialized');
+  // console.log('[MAIN] initialized');
 
   console.log(`[MAIN] begin transcribing file ${file}`);
 
-  // const binaryDataOnDisk = fs.readFileSync(filepath).toString('binary');
-  // console.log(`[MAIN] read binary data on disk. Size is: ${getSize(binaryDataOnDisk.length)}`);
-  await page.evaluate(async (filepath) => {
-    console.log('inner filepath', filepath);
-    const resp = await fetch(filepath);
-    console.log('got resp back', resp);
+  await page.evaluate(async (file) => {
+    try {
+      const resp = await fetch(`http://localhost:3000/${file}`);
+      if (!resp.ok) {
+        throw new Error(`HTTP ${resp.status} - ${resp.statusText}`);
+      }
+      const buffer = await resp.arrayBuffer();
+
+      console.log('Begin to read buffered data');
+      // const incomingData = window.buffer.Buffer.from(buffer, 'binary');
+      console.log('model transcribe from audio file');
+      const ns = await model.transcribeFromAudioFile(new Blob([buffer]));
+      console.log('go ns, sequent to midi');
+      const data = mm.sequenceProtoToMidi(ns);
+      console.log('transcribed successfully, calling back data');
+      console.log('return to string');
+      return ArrayBufferToString(data);
+    } catch(err) {
+      console.error('Error parsing buffer', err);
+    }
+
+
     // var oReq = new XMLHttpRequest();
     // oReq.open("GET", "/myfile.png", true);
     // oReq.responseType = "blob";
@@ -180,21 +201,14 @@ const transcribeFile = async (file) => {
     // oReq.send();
     //
     //
-    // function checkStatus(response) {
-    //   if (!response.ok) {
-    //     throw new Error(`HTTP ${response.status} - ${response.statusText}`);
-    //   }
-    //   return response;
-    // }
+    function checkStatus(response) {
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+      }
+      return response;
+    }
     //
-    // try {
-    //   const resp = await fetch(filepath);
-    //   const buffer = await checkStatus(response) && response.arrayBuffer();
-    //   console.log('buffer', buffer);
-    // } catch(err) {
-    //   console.error('Error parsing buffer', err);
-    // }
-  }, filepath);
+  }, file);
   // await page.evaluate(async (input) => {
   //   console.log('the binary data is', input);
   // }, binaryDataOnDisk);
