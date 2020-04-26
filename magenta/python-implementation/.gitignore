@@ -1,2 +1,6 @@
 samples
 checkpoints
+audio
+out
+.ipynb_checkpoints
+*.ipynb

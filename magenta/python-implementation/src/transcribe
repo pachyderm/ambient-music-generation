@@ -1,8 +1,0 @@
-#!/bin/bash
-MODEL_DIR=/models/train
-
-# If GPU
-# onsets_frames_transcription_transcribe --model_dir="/checkpoints" "$(ls -d /samples/*)"
-
-# If CPU
-onsets_frames_transcription_transcribe --hparams=use_cudnn=false --model_dir="/checkpoints" "$(ls -d /samples/*)"
