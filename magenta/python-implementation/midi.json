@@ -1,0 +1,19 @@
+{
+  "pipeline": {
+    "name": "dev-midi"
+  },
+  "description": "A pipeline that performs midi transcription using Magenta",
+  "transform": {
+    "cmd": [
+      "python3",
+      "/notebooks/src/transcribe.py"
+    ],
+    "image": "hitheory/onsets-and-frames:v1.5"
+  },
+  "input": {
+    "pfs": {
+      "repo": "dev-audio-processed-wav",
+      "glob": "/*"
+    }
+  }
+}

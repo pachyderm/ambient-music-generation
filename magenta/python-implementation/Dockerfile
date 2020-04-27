@@ -30,6 +30,8 @@ RUN mkdir /.local && chmod a+rwx /.local
 WORKDIR /notebooks
 EXPOSE 8888
 
+COPY src /notebooks/src
+
 CMD ["python3", "/notebooks/src/transcribe.py"]
 
 
