@@ -1,0 +1,18 @@
+Metadata-Version: 1.1
+Name: pretty-midi
+Version: 0.2.8
+Summary: Functions and classes for handling MIDI data conveniently.
+Home-page: https://github.com/craffel/pretty_midi
+Author: Colin Raffel
+Author-email: craffel@gmail.com
+License: MIT
+Description:     Functions and classes which make handling MIDI data easy in Python.
+            Provides methods for parsing, modifying, and analyzing MIDI files.
+            
+Keywords: audio music midi mir
+Platform: UNKNOWN
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Multimedia :: Sound/Audio :: MIDI

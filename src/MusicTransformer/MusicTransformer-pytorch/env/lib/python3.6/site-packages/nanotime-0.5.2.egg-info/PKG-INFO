@@ -1,0 +1,11 @@
+Metadata-Version: 1.0
+Name: nanotime
+Version: 0.5.2
+Summary: nanotime python implementation
+Home-page: http://github.com/jbenet/nanotime/tree/master/python
+Author: Juan Batiz-Benet
+Author-email: jbenet@cs.stanford.com
+License: MIT License
+Description: UNKNOWN
+Keywords: nanotime,nanosecond,time precision,64bit time
+Platform: UNKNOWN

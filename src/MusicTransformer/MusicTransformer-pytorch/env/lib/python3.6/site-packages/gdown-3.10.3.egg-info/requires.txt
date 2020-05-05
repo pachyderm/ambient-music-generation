@@ -1,0 +1,4 @@
+filelock
+requests[socks]
+six
+tqdm

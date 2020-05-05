@@ -1,0 +1,41 @@
+FROM ubuntu:latest
+
+######### Install Python 3 #########
+RUN apt-get update \
+  && apt-get install -y python3-pip python3-dev \
+  && cd /usr/local/bin \
+  && ln -s /usr/bin/python3 python \
+  && python3 -m pip install --upgrade pip \
+  && pip3 install --upgrade pip
+
+######### Install System Packages #########
+RUN apt-get update && apt-get install wget curl zip -y
+
+######### Install Google Cloud SDK #########
+RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+RUN apt-get install apt-transport-https ca-certificates gnupg -y
+RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+RUN apt-get update && apt-get install google-cloud-sdk -y
+
+
+
+######### Install Magenta #########
+RUN pip3 install tensorflow==1.15.2
+RUN apt-get update -qq && apt-get install -qq libfluidsynth1 fluid-soundfont-gm build-essential libasound2-dev libjack-dev ffmpeg
+RUN pip3 install pyfluidsynth pretty_midi && pip3 install -qU magenta
+RUN apt autoremove -y && apt-get install --fix-broken
+RUN pip3 install librosa
+
+######### Set up file system #########
+RUN mkdir /data
+RUN mkdir /notebooks && chmod a+rwx /notebooks
+RUN mkdir /logs && chmod 777 /logs
+RUN mkdir /.local && chmod a+rwx /.local
+WORKDIR /notebooks
+EXPOSE 8888
+
+######### Install and run Jupyter notebook #########
+RUN pip3 install jupyter google-colab
+COPY jupyter_notebook_config.py /root/.jupyter/jupyter_notebook_config.py
+CMD ["bash", "-c", "jupyter notebook --ip 0.0.0.0 --allow-root --no-browser"]
+
