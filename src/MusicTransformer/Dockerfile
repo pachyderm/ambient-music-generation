@@ -46,7 +46,7 @@ RUN apt-get install libcairo2-dev libjpeg-dev libgif-dev libpango1.0-dev -y
 
 RUN sed 's/^pygobject==.*/pygobject==3.36.0/g' /notebooks/MusicTransformer-tensorflow2.0/requirements.txt -i
 RUN sed 's/^tensorflow-gpu==.*/tensorflow-gpu==2.2.0rc4/g' /notebooks/MusicTransformer-tensorflow2.0/requirements.txt -i
-# RUN sed 's/^grpcio==.*/grpcio==1.28.1/g' /notebooks/MusicTransformer-tensorflow2.0/requirements.txt -i
+RUN sed 's/^grpcio==.*/grpcio==1.28.1/g' /notebooks/MusicTransformer-tensorflow2.0/requirements.txt -i
 RUN sed '72d' /notebooks/MusicTransformer-tensorflow2.0/requirements.txt -i
 RUN sed '7d' /notebooks/MusicTransformer-tensorflow2.0/requirements.txt -i
 RUN pip3 install -r /notebooks/MusicTransformer-tensorflow2.0/requirements.txt --ignore-installed
