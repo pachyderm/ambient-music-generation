@@ -20,6 +20,7 @@ RUN mkdir -p /data/transformer && \
 # #
 # ####################################
 FROM ubuntu:latest
+ARG DEBIAN_FRONTEND=noninteractive
 
 ######### Magenta Data #########
 # Copy Transformer
