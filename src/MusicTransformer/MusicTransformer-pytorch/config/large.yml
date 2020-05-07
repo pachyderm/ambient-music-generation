@@ -1,6 +1,0 @@
-experiment: 'embedding512-layer6'
-max_seq: 2048
-embedding_dim: 512
-num_layers: 6
-event_dim: 388 
-fp16:

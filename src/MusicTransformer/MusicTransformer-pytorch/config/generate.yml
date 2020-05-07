@@ -1,4 +1,0 @@
-save_path: 'bin/generated.mid'
-condition_file:
-length: 4000
-threshold_len: 500
