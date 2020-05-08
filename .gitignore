@@ -2,6 +2,6 @@ node_modules
 .DS_Store
 wave_files
 tmp
-src/MusicTransformer-tensorflow2.0/midi_processor
-src/MusicTransformer-tensorflow2.0/save
+src/MusicTransformer/MusicTransformer-tensorflow2.0/midi_processor
+src/MusicTransformer/MusicTransformer-tensorflow2.0/save
 .ipynb_checkpoints

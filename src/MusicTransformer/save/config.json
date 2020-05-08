@@ -1,1 +1,0 @@
-{"debug": false, "max_seq": 1024, "num_layer": 6, "embedding_dim": 256, "vocab_size": 391, "dist": false}
