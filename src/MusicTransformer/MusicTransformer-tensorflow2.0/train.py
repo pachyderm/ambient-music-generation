@@ -8,6 +8,9 @@ import utils
 import argparse
 import datetime
 import sys
+import os
+#os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   # see issue #152
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 tf.executing_eagerly()
 
@@ -41,7 +44,7 @@ num_layer = args.num_layers
 
 
 # load data
-dataset = Data('dataset/processed')
+dataset = Data('/data/classic_piano_preprocessed')
 print(dataset)
 
 

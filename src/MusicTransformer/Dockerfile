@@ -22,8 +22,6 @@ RUN mkdir -p /data/transformer && \
 ####################################
 FROM ubuntu:latest as preprocessing_step
 ARG DEBIAN_FRONTEND=noninteractive
-
-######### Install Python 3 and system packages#########
 ENV LANG C.UTF-8
 
 RUN apt-get update && apt-get install -y \
@@ -34,42 +32,24 @@ RUN apt-get update && apt-get install -y \
   && apt-get install python3.6 python3-pip -y
 
 # ######### Set up Jason #########
-# RUN git clone https://github.com/jason9693/MusicTransformer-tensorflow2.0.git /notebooks/MusicTransformer-tensorflow2.0
-RUN pip3 install requests
-RUN pip3 install pycairo
-RUN pip3 install pygobject --ignore-installed
-RUN apt-get install libcairo2-dev libjpeg-dev libgif-dev libpango1.0-dev -y
+RUN apt-get install libcairo2-dev libjpeg-dev libgif-dev libpango1.0-dev libssl-dev -y
+RUN git clone https://github.com/hitheory/MusicTransformer-tensorflow2.0.git /src
+RUN pip3 install -r /src/requirements.txt --ignore-installed
 
-# Transform requirements.txt
-RUN git clone https://github.com/jason9693/MusicTransformer-tensorflow2.0.git /MusicTransformer-tensorflow2.0
-
-# Other dependencies that seem necessary
-RUN pip3 install tensor2tensor prompt-toolkit
-RUN pip3 install progress
-RUN apt-get install build-essential libssl-dev libffi-dev python-dev -y
-
-# Fix requirements.txt file
-RUN sed 's/^pygobject==.*/pygobject==3.36.0/g' /MusicTransformer-tensorflow2.0/requirements.txt -i
-RUN sed 's/^tensorflow-gpu==.*/tensorflow-gpu==2.2.0rc4/g' /MusicTransformer-tensorflow2.0/requirements.txt -i
-RUN sed 's/^grpcio==.*/grpcio==1.28.1/g' /MusicTransformer-tensorflow2.0/requirements.txt -i
-RUN sed '72d' /MusicTransformer-tensorflow2.0/requirements.txt -i
-RUN sed '7d' /MusicTransformer-tensorflow2.0/requirements.txt -i
-RUN pip3 install grpcio
-RUN pip3 install -r /MusicTransformer-tensorflow2.0/requirements.txt --ignore-installed
-
+######### Install jason #########
 RUN git clone https://github.com/jason9693/midi-neural-processor.git \
-  && mv midi-neural-processor /MusicTransformer-tensorflow2.0/midi_processor
-RUN sh /MusicTransformer-tensorflow2.0/dataset/scripts/classic_piano_downloader.sh /data/classic_piano
-RUN python3 /MusicTransformer-tensorflow2.0/preprocess.py /data/classic_piano /data/classic_piano_preprocessed
-
+  && mv midi-neural-processor /src/midi_processor
+RUN sh /src/dataset/scripts/classic_piano_downloader.sh /data/classic_piano
+RUN python3 /src/preprocess.py /data/classic_piano /data/classic_piano_preprocessed
 
 # ####################################
 # #
 # # Jupyter
 # #
 # ####################################
-FROM ubuntu:latest
+FROM tensorflow/tensorflow:2.2.0-gpu-jupyter
 ARG DEBIAN_FRONTEND=noninteractive
+ENV LANG C.UTF-8
 
 ######### Magenta Data #########
 # Copy Transformer
@@ -77,80 +57,35 @@ COPY --from=music_transformer_data /data /data
 # Copy Preprocessed data
 COPY --from=preprocessing_step /data/classic_piano_preprocessed /data/classic_piano_preprocessed
 
-######### Install Python 3 and system packages#########
-ENV LANG C.UTF-8
-
+# ######### Set up Jason #########
 RUN apt-get update && apt-get install -y \
   libgirepository1.0-dev gcc libcairo2-dev \
-  pkg-config gir1.2-gtk-3.0 software-properties-common \
-  git curl wget \
-  && add-apt-repository ppa:deadsnakes/ppa -y \
-  && apt-get install python3.6 python3-pip -y
-
-# ######### Set up Jason #########
-# RUN git clone https://github.com/jason9693/MusicTransformer-tensorflow2.0.git /notebooks/MusicTransformer-tensorflow2.0
-RUN pip3 install requests
-RUN pip3 install pycairo
-RUN pip3 install pygobject --ignore-installed
-RUN git clone https://github.com/jason9693/MusicTransformer-tensorflow2.0.git /MusicTransformer-tensorflow2.0
-RUN apt-get install libcairo2-dev libjpeg-dev libgif-dev libpango1.0-dev -y
-
-# Fix requirements.txt file
-RUN sed 's/^pygobject==.*/pygobject==3.36.0/g' /MusicTransformer-tensorflow2.0/requirements.txt -i
-RUN sed 's/^tensorflow-gpu==.*/tensorflow-gpu==2.2.0rc4/g' /MusicTransformer-tensorflow2.0/requirements.txt -i
-RUN sed 's/^grpcio==.*/grpcio==1.28.1/g' /MusicTransformer-tensorflow2.0/requirements.txt -i
-RUN sed '72d' /MusicTransformer-tensorflow2.0/requirements.txt -i
-RUN sed '7d' /MusicTransformer-tensorflow2.0/requirements.txt -i
-RUN pip3 install tensor2tensor prompt-toolkit
-RUN pip3 install progress
-RUN apt-get install build-essential libssl-dev libffi-dev python-dev -y
-
-RUN pip3 install -r /MusicTransformer-tensorflow2.0/requirements.txt --ignore-installed
-
-
-
-
-
-# ######### Install System Packages #########
-# RUN apt-get update && apt-get install wget curl zip libcairo2-dev libgirepository1.0-dev -y
-# RUN apt install libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-dev gir1.2-gtk-3.0 -y
-# # RUN apt-get update && apt-get install wget curl zip -y
-
-# ######### Set up Jason #########
-# COPY MusicTransformer-pytorch /notebooks/MusicTransformer-pytorch
-# COPY MusicTransformer-tensorflow2.0 /notebooks/MusicTransformer-tensorflow2.0
-# RUN pip3 install requests
-# RUN pip3 install pycairo
-# RUN pip3 install PyGObject
-# # RUN pip3 install pygobject==3.27.0 --user
-# RUN pip3 install -r /notebooks/MusicTransformer-tensorflow2.0/requirements.txt --ignore-installed
+  pkg-config gir1.2-gtk-3.0 \
+  git curl wget vim \
+  libjpeg-dev libgif-dev libpango1.0-dev libssl-dev
+RUN git clone https://github.com/hitheory/MusicTransformer-tensorflow2.0.git /tf/MusicTransformer-tensorflow2.0
+RUN git clone https://github.com/jason9693/midi-neural-processor.git \
+  && mv midi-neural-processor /tf/MusicTransformer-tensorflow2.0/midi_processor
+RUN pip3 install -r /tf/MusicTransformer-tensorflow2.0/requirements.txt --ignore-installed
 
 ######### Install Jupyter and Notebook requirements #########
-RUN pip3 install google-colab
-RUN pip3 install jupyter
+# RUN pip3 install google-colab
+# RUN pip3 install jupyter
 # https://github.com/jupyter/jupyter_console/issues/163#issuecomment-418392676
-RUN pip3 install --upgrade ipykernel
-RUN pip3 install tensor2tensor prompt-toolkit
-RUN pip3 install progress
+# RUN pip3 install --upgrade ipykernel
+# RUN pip3 install tensor2tensor prompt-toolkit
 # Magenta runs an old version of bokeh
 # RUN pip uninstall bokeh -y
 # RUN pip3 install bokeh==1.4.0
 
-
 ######### Set up file system #########
-RUN mkdir -p /notebooks && chmod a+rwx /notebooks
-RUN mkdir -p /logs && chmod 777 /logs
-RUN mkdir /.local && chmod a+rwx /.local
-WORKDIR /notebooks
+# RUN mkdir -p /notebooks && chmod a+rwx /notebooks
+# RUN mkdir -p /logs && chmod 777 /logs
+# RUN mkdir /.local && chmod a+rwx /.local
+# WORKDIR /notebooks
 EXPOSE 8888
 COPY jupyter_notebook_config.py /root/.jupyter/jupyter_notebook_config.py
 
-######### Install jason #########
-WORKDIR /notebooks/MusicTransformer-tensorflow2.0
-RUN git clone https://github.com/jason9693/midi-neural-processor.git \
-  && mv midi-neural-processor midi_processor
-RUN sh dataset/scripts/classic_piano_downloader.sh ./classic_piano
-RUN python3 preprocess.py ./classic_piano ./dataset_out
-
 ######### Run Jupyter notebook #########
-CMD ["bash", "-c", "jupyter notebook --ip 0.0.0.0 --allow-root --no-browser"]
+# CMD ["bash", "-c", "jupyter notebook --ip 0.0.0.0 --allow-root --no-browser"]
+# CMD ["bash", "-c", "./train_script.sh"]
