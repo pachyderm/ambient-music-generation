@@ -13,6 +13,5 @@ docker run --name $containername --rm -it -p 8889:8888 --runtime nvidia \
 -v $(pwd)/audio:/tf/audio \
 -v $(pwd)/pickle:/pickle \
 -v $(pwd)/save:/save \
--v $(pwd)/MusicTransformer-tensorflow2.0:/tf/MusicTransformer-tensorflow2.0 \
 $containername /tf/src/train_script.sh
 # $containername 
