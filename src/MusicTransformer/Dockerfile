@@ -67,6 +67,8 @@ RUN git clone https://github.com/hitheory/MusicTransformer-tensorflow2.0.git /tf
 RUN git clone https://github.com/jason9693/midi-neural-processor.git \
   && mv midi-neural-processor /tf/MusicTransformer-tensorflow2.0/midi_processor
 RUN pip3 install -r /tf/MusicTransformer-tensorflow2.0/requirements.txt --ignore-installed
+WORKDIR /tf/MusicTransformer-tensorflow2.0
+RUN git pull origin master
 
 ######### Install Jupyter and Notebook requirements #########
 # RUN pip3 install google-colab
@@ -83,8 +85,8 @@ RUN pip3 install -r /tf/MusicTransformer-tensorflow2.0/requirements.txt --ignore
 # RUN mkdir -p /logs && chmod 777 /logs
 # RUN mkdir /.local && chmod a+rwx /.local
 # WORKDIR /notebooks
-EXPOSE 8888
-COPY jupyter_notebook_config.py /root/.jupyter/jupyter_notebook_config.py
+# EXPOSE 8888
+# COPY jupyter_notebook_config.py /root/.jupyter/jupyter_notebook_config.py
 
 ######### Run Jupyter notebook #########
 # CMD ["bash", "-c", "jupyter notebook --ip 0.0.0.0 --allow-root --no-browser"]
