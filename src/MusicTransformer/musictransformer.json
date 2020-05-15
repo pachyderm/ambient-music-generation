@@ -1,0 +1,22 @@
+{
+  "pipeline": {
+    "name": "dev-musictransformer"
+  },
+  "transform": {
+    "image": "hitheory/musictransformer:0.0.1",
+    "cmd": [ "sh", "/tf/MusicTransformer-tensorflow2.0/musictransformer.sh" ]
+  },
+  "resource_limits": {
+    "memory": "2048M",
+    "gpu": {
+      "type": "nvidia.com/gpu",
+      "number": 1
+    }
+  },
+  "input": {
+    "pfs": {
+      "repo": "dev-midi",
+      "glob": "/*"
+    }
+  }
+}
