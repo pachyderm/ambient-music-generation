@@ -3,12 +3,10 @@
     "name": "dev-musictransformer"
   },
   "transform": {
-    "image": "hitheory/test-musictransformer:0.0.17",
+    "image": "hitheory/test-musictransformer:0.0.20",
     "cmd": [
       "sh",
-      "/src/musictransformer.sh",
-      "--foo",
-      "foo"
+      "/src/musictransformer.sh"
     ]
   },
   "input": {

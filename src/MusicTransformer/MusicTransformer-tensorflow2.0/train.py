@@ -1,3 +1,4 @@
+print('***** train.py')
 from model import MusicTransformerDecoder
 from custom.layers import *
 from custom import callback
@@ -10,7 +11,6 @@ import datetime
 import sys
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' 
-print('***** train.py')
 # import os
 #os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   # see issue #152
 # os.environ["CUDA_VISIBLE_DEVICES"]="1"
@@ -20,14 +20,13 @@ tf.executing_eagerly()
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('--foo')
-parser.add_argument('--l_r', default=None, help='학습률', type=float)
+parser.add_argument('--l_r', default=None, type=float)
 parser.add_argument('--batch_size', default=2, help='batch size', type=int)
-parser.add_argument('--pickle_dir', default='music', help='데이터셋 경로')
-parser.add_argument('--max_seq', default=2048, help='최대 길이', type=int)
-parser.add_argument('--epochs', default=100, help='에폭 수', type=int)
-parser.add_argument('--load_path', default=None, help='모델 로드 경로', type=str)
-parser.add_argument('--save_path', default="result/dec0722", help='모델 저장 경로')
+parser.add_argument('--pickle_dir', default='/pfs/out/pickle')
+parser.add_argument('--max_seq', default=2048, type=int)
+parser.add_argument('--epochs', default=100, type=int)
+parser.add_argument('--load_path', default=None, type=str)
+parser.add_argument('--save_path', default="/pfs/out/save")
 parser.add_argument('--is_reuse', default=False)
 parser.add_argument('--multi_gpu', default=True)
 parser.add_argument('--num_layers', default=6, type=int)
@@ -51,7 +50,7 @@ num_layer = args.num_layers
 
 
 # load data
-dataset = Data('dataset/processed')
+dataset = Data('/data')
 print(dataset)
 
 

@@ -27,7 +27,7 @@ const updatePipeline = (target, targetContainerName) => {
   fs.writeFileSync(target, JSON.stringify(pipeline, null, 2));
 };
 
-const pipelineJSON = 'musictransformer.json';
+const pipelineJSON = `${docker_name}.json`;
 
 (async () => {
   await updatePipeline(pipelineJSON, docker_name);
@@ -47,6 +47,6 @@ const pipelineJSON = 'musictransformer.json';
   await exec(`pachctl list pipeline | grep ${docker_name}`);
   await wait(2);
   console.log(`pachctl logs -p ${docker_name} -f`)
-  await exec(`pachctl put file dev-audio-unprocessed@master:aphextwin.mp3 -f ../../audio/samples/aphextwin.mp3`);
+  // await exec(`pachctl put file dev-audio-unprocessed@master:aphextwin.mp3 -f ../../audio/samples/aphextwin.mp3`);
   // await exec(`pachctl logs -p ${docker_name} -f`);
 })();
