@@ -3,11 +3,11 @@
     "name": "dev-musictransformer"
   },
   "transform": {
-    "image": "hitheory/musictransformer:0.0.1",
+    "image": "hitheory/musictransformer:0.0.2",
     "cmd": [ "sh", "/tf/MusicTransformer-tensorflow2.0/musictransformer.sh" ]
   },
   "resource_limits": {
-    "memory": "2048M",
+    "memory": "14336M",
     "gpu": {
       "type": "nvidia.com/gpu",
       "number": 1

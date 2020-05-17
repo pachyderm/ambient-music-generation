@@ -63,12 +63,11 @@ RUN apt-get update && apt-get install -y \
   pkg-config gir1.2-gtk-3.0 \
   git curl wget vim \
   libjpeg-dev libgif-dev libpango1.0-dev libssl-dev
-RUN git clone https://github.com/hitheory/MusicTransformer-tensorflow2.0.git /tf/MusicTransformer-tensorflow2.0
+COPY MusicTransformer-tensorflow2.0.git /tf/MusicTransformer-tensorflow2.0
 RUN git clone https://github.com/jason9693/midi-neural-processor.git \
   && mv midi-neural-processor /tf/MusicTransformer-tensorflow2.0/midi_processor
 RUN pip3 install -r /tf/MusicTransformer-tensorflow2.0/requirements.txt --ignore-installed
 WORKDIR /tf/MusicTransformer-tensorflow2.0
-RUN git pull origin master
 
 ######### Install Jupyter and Notebook requirements #########
 # RUN pip3 install google-colab

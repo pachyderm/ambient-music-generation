@@ -1,4 +1,4 @@
-const fs = require("fs");
+// const fs = require("fs");
 const argv = require("yargs").argv;
 const child_process = require("child_process");
 
@@ -20,20 +20,6 @@ const exec = (cmd) =>
   });
 
 const wait = (d) => new Promise((resolve) => setTimeout(resolve, d));
-
-const updatePipeline = (target, targetContainerName) => {
-  const pipeline = JSON.parse(fs.readFileSync(target));
-  pipeline.transform.image = `hitheory/${targetContainerName}:${version}`;
-  fs.writeFileSync(target, JSON.stringify(pipeline, null, 2));
-};
-
-const updateScript = (target) => {
-  const script = fs.readFileSync(target, "utf8");
-  const newScript = [`console.log('${version}')`].concat(
-    script.split("\n").slice(1)
-  );
-  fs.writeFileSync(target, newScript.join("\n"));
-};
 
 (async () => {
   console.log("ok!");
