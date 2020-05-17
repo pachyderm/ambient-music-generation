@@ -30,16 +30,23 @@ const updatePipeline = (target, targetContainerName) => {
 const pipelineJSON = 'musictransformer.json';
 
 (async () => {
-  const targetContainerName = "musictransformer";
-  await updatePipeline(pipelineJSON, targetContainerName);
+  await updatePipeline(pipelineJSON, docker_name);
+  console.log('**** building');
   await exec(`docker build -t ${docker_name} -f Dockerfile .`);
+  console.log('**** tagging');
   await exec(
-    `docker tag ${docker_name} hitheory/${targetContainerName}:${version}`
+    `docker tag ${docker_name} hitheory/${docker_name}:${version}`
   );
-  await exec(`docker push hitheory/${targetContainerName}:${version}`);
+  console.log('**** pushing');
+  await exec(`docker push hitheory/${docker_name}:${version}`);
 
+  console.log('**** updating pipeline');
   await exec(`pachctl update pipeline -f ./${pipelineJSON}`);
-  // await exec(`pachctl put file dev-audio-unprocessed@master:aphextwin.mp3 -f ../../audio/samples/aphextwin.mp3`);
+  await wait(5);
+  console.log('**** monitoring'); 
+  await exec(`pachctl list pipeline | grep ${docker_name}`);
   await wait(2);
-  // await exec(`pachctl logs -p dev-midi -f`);
+  console.log(`pachctl logs -p ${docker_name} -f`)
+  await exec(`pachctl put file dev-audio-unprocessed@master:aphextwin.mp3 -f ../../audio/samples/aphextwin.mp3`);
+  // await exec(`pachctl logs -p ${docker_name} -f`);
 })();

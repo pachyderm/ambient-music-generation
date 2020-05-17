@@ -20,6 +20,7 @@ tf.executing_eagerly()
 
 parser = argparse.ArgumentParser()
 
+parser.add_argument('--foo')
 parser.add_argument('--l_r', default=None, help='학습률', type=float)
 parser.add_argument('--batch_size', default=2, help='batch size', type=int)
 parser.add_argument('--pickle_dir', default='music', help='데이터셋 경로')

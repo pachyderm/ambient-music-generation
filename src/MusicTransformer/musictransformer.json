@@ -3,23 +3,13 @@
     "name": "dev-musictransformer"
   },
   "transform": {
-    "image": "hitheory/musictransformer:0.0.5",
+    "image": "hitheory/test-musictransformer:0.0.17",
     "cmd": [
       "sh",
-      "/tf/MusicTransformer-tensorflow2.0/musictransformer.sh",
-      "--epochs 22",
-      "--max_seq 2048",
-      "--pickle_dir /pfs/out/pickle",
-      "--save_path /pfs/out/save",
-      "--batch_size 2"
+      "/src/musictransformer.sh",
+      "--foo",
+      "foo"
     ]
-  },
-  "resource_limits": {
-    "memory": "14336M",
-    "gpu": {
-      "type": "nvidia.com/gpu",
-      "number": 1
-    }
   },
   "input": {
     "pfs": {
