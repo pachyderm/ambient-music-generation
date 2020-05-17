@@ -9,9 +9,12 @@ import argparse
 import datetime
 import sys
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' 
+print('***** train.py')
+# import os
 #os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   # see issue #152
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
-print('Use device 1')
+# os.environ["CUDA_VISIBLE_DEVICES"]="1"
+# print('***** Use device 1')
 
 tf.executing_eagerly()
 
@@ -30,7 +33,7 @@ parser.add_argument('--num_layers', default=6, type=int)
 
 args = parser.parse_args()
 
-print('Given args', args)
+print('***** Given args', args)
 
 
 # set arguments

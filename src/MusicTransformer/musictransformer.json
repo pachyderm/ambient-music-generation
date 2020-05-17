@@ -3,8 +3,16 @@
     "name": "dev-musictransformer"
   },
   "transform": {
-    "image": "hitheory/musictransformer:0.0.2",
-    "cmd": [ "sh", "/tf/MusicTransformer-tensorflow2.0/musictransformer.sh" ]
+    "image": "hitheory/musictransformer:0.0.5",
+    "cmd": [
+      "sh",
+      "/tf/MusicTransformer-tensorflow2.0/musictransformer.sh",
+      "--epochs 22",
+      "--max_seq 2048",
+      "--pickle_dir /pfs/out/pickle",
+      "--save_path /pfs/out/save",
+      "--batch_size 2"
+    ]
   },
   "resource_limits": {
     "memory": "14336M",
