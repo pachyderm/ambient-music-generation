@@ -1,3 +1,4 @@
+print('I am the python script')
 from model import MusicTransformerDecoder
 from custom.layers import *
 from custom import callback
