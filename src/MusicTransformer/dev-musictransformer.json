@@ -3,11 +3,18 @@
     "name": "dev-musictransformer"
   },
   "transform": {
-    "image": "hitheory/test-musictransformer:0.0.20",
+    "image": "hitheory/test-musictransformer:0.0.30",
     "cmd": [
       "sh",
       "/src/musictransformer.sh"
     ]
+  },
+    "resource_limits": {
+    "memory": "14336M",
+    "gpu": {
+      "type": "nvidia.com/gpu",
+      "number": 1
+    }
   },
   "input": {
     "pfs": {
