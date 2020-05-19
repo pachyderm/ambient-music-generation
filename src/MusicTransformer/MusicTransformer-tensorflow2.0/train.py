@@ -26,7 +26,7 @@ parser.add_argument('--pickle_dir', default='/pfs/out/pickle')
 parser.add_argument('--max_seq', default=2048, type=int)
 parser.add_argument('--epochs', default=100, type=int)
 parser.add_argument('--load_path', default=None, type=str)
-parser.add_argument('--save_path', default="/pfs/out/save")
+parser.add_argument('--save_path', default="/pfs/out")
 parser.add_argument('--is_reuse', default=False)
 parser.add_argument('--multi_gpu', default=True)
 parser.add_argument('--num_layers', default=6, type=int)
@@ -50,7 +50,8 @@ num_layer = args.num_layers
 
 
 # load data
-dataset = Data('/data')
+INPUTS = '/pfs/dev-midi';
+dataset = Data(INPUTS)
 print(dataset)
 
 

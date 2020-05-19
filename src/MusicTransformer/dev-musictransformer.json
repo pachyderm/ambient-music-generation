@@ -19,7 +19,7 @@
   "input": {
     "pfs": {
       "repo": "dev-midi",
-      "glob": "/*"
+      "glob": "/"
     }
   }
 }
