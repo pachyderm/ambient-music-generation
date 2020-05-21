@@ -1,0 +1,60 @@
+Metadata-Version: 2.1
+Name: git-url-parse
+Version: 1.2.2
+Summary: git-url-parse - A simple GIT URL parser.
+Home-page: https://github.com/retr0h/git-url-parse
+Author: John Dewey
+Author-email: john@dewey.ws
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Console
+Classifier: Framework :: Flask
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Information Technology
+Classifier: Intended Audience :: System Administrators
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Natural Language :: English
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Topic :: System :: Systems Administration
+Classifier: Topic :: Utilities
+Requires-Dist: pbr
+
+.. image:: http://img.shields.io/travis/retr0h/git-url-parse.svg?style=popout-square&logo=travis
+  :target: https://travis-ci.org/retr0h/git-url-parse
+
+.. image:: https://img.shields.io/codecov/c/github/retr0h/git-url-parse.svg?style=popout-square&logo=codecov
+  :target: https://codecov.io/gh/retr0h/git-url-parse
+
+.. image:: https://img.shields.io/pypi/v/git-url-parse.svg?style=popout-square&logo=python
+  :target: https://pypi.org/project/git-url-parse/
+
+.. image:: https://img.shields.io/readthedocs/git-url-parse.svg?style=popout-square&logo=Read%20the%20Docs
+  :target: https://git-url-parse.readthedocs.io/en/latest/
+
+***********
+giturlparse
+***********
+
+A simple GIT URL parser similar to `giturlparse.py`_.
+
+.. _`giturlparse.py`: https://github.com/FriendCode/giturlparse.py
+
+Documentation
+=============
+
+https://git-url-parse.readthedocs.io/
+
+License
+=======
+
+MIT
+
+
+

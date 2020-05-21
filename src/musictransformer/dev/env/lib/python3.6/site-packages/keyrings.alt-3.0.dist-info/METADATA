@@ -1,0 +1,54 @@
+Metadata-Version: 2.0
+Name: keyrings.alt
+Version: 3.0
+Summary: Alternate keyring implementations
+Home-page: https://github.com/jaraco/keyrings.alt
+Author: Jason R. Coombs
+Author-email: jaraco@jaraco.com
+License: UNKNOWN
+Description-Content-Type: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Requires-Python: >=2.7
+Requires-Dist: six
+Provides-Extra: docs
+Requires-Dist: sphinx; extra == 'docs'
+Requires-Dist: jaraco.packaging (>=3.2); extra == 'docs'
+Requires-Dist: rst.linker (>=1.9); extra == 'docs'
+Provides-Extra: testing
+Requires-Dist: pytest (>=2.8); extra == 'testing'
+Requires-Dist: pytest-sugar (>=0.9.1); extra == 'testing'
+Requires-Dist: collective.checkdocs; extra == 'testing'
+Requires-Dist: backports.unittest-mock; extra == 'testing'
+Requires-Dist: keyring[test] (>=10.3.1); extra == 'testing'
+Requires-Dist: fs (<2,>=0.5); extra == 'testing'
+Requires-Dist: pycrypto; extra == 'testing'
+Provides-Extra: testing
+Requires-Dist: gdata; python_version == "2.7" and extra == 'testing'
+Requires-Dist: python-keyczar; python_version == "2.7" and extra == 'testing'
+
+.. image:: https://img.shields.io/pypi/v/keyrings.alt.svg
+   :target: https://pypi.org/project/keyrings.alt
+
+.. image:: https://img.shields.io/pypi/pyversions/keyrings.alt.svg
+
+.. image:: https://img.shields.io/travis/jaraco/keyrings.alt/master.svg
+   :target: https://travis-ci.org/jaraco/keyrings.alt
+
+.. image:: https://readthedocs.org/projects/keyringsalt/badge/?version=latest
+   :target: https://keyringsalt.readthedocs.io/en/latest/?badge=latest
+
+Alternate keyring backend implementations for use with the
+`keyring package <https://pypi.python.org/pypi/keyring>`_.
+
+Keyrings in this package may have security risks or other implications. These
+backends were extracted from the main keyring project to
+make them available for those who wish to employ them, but are
+discouraged for general production use. Include this module and use its
+backends at your own risk.
+
+

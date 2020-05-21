@@ -1,0 +1,25 @@
+{
+  "pipeline": {
+    "name": "dev-musictransformer"
+  },
+  "transform": {
+    "image": "hitheory/dev-musictransformer:0.3.12",
+    "cmd": [
+      "sh",
+      "/src/musictransformer.sh"
+    ]
+  },
+  "resource_limits": {
+    "memory": "14336M",
+    "gpu": {
+      "type": "nvidia.com/gpu",
+      "number": 1
+    }
+  },
+  "input": {
+    "pfs": {
+      "repo": "dev-transformer-preprocess",
+      "glob": "/"
+    }
+  }
+}

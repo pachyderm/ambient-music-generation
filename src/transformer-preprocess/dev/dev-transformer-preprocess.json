@@ -1,0 +1,18 @@
+{
+  "pipeline": {
+    "name": "dev-transformer-preprocess"
+  },
+  "transform": {
+    "image": "hitheory/dev-transformer-preprocess:0.1.0",
+    "cmd": [
+      "sh",
+      "/src/preprocess.sh"
+    ]
+  },
+  "input": {
+    "pfs": {
+      "repo": "test-midi",
+      "glob": "/"
+    }
+  }
+}
