@@ -3,7 +3,7 @@
     "name": "transformer-preprocess"
   },
   "transform": {
-    "image": "hitheory/transformer-preprocess:0.2.0",
+    "image": "hitheory/transformer-preprocess:0.2.1",
     "cmd": [
       "sh",
       "/src/preprocess.sh"
