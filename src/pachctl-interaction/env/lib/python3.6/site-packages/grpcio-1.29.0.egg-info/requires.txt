@@ -1,0 +1,7 @@
+six>=1.5.2
+
+[:python_version < "3.2"]
+futures>=2.2.0
+
+[:python_version < "3.4"]
+enum34>=1.0.4

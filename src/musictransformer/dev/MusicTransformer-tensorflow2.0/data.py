@@ -7,18 +7,14 @@ import params as par
 
 
 class Data:
-    def __init__(self, dir_path):
+    def __init__(self, dir_path, splits=[0.8, 0.9]):
         self.files = list(utils.find_files_by_extensions(dir_path, ['.pickle']))
-        # splits = [0.8, 0.9]
-        splits = [0.6, 0.8]
+        # print(self.files)
         self.file_dict = {
             'train': self.files[:int(len(self.files) * splits[0])],
             'eval': self.files[int(len(self.files) * splits[0]): int(len(self.files) * splits[1])],
             'test': self.files[int(len(self.files) * splits[1]):],
         }
-        print('{num} in train'.format(num = len(self.file_dict['train'])))
-        print('{num} in eval'.format(num = len(self.file_dict['eval'])))
-        print('{num} in test'.format(num = len(self.file_dict['test'])))
         self._seq_file_name_idx = 0
         self._seq_idx = 0
         pass
@@ -27,14 +23,9 @@ class Data:
         return '<class Data has "'+str(len(self.files))+'" files>'
 
     def batch(self, batch_size, length, mode='train'):
-        print('{num} in {mode} | bs {bs}'.format(bs=batch_size, mode=mode, num = len(self.file_dict[mode])))
-
         batch_files = random.sample(self.file_dict[mode], k=batch_size)
 
-        batch_data = [
-            self._get_seq(file, length)
-            for file in batch_files
-        ]
+        batch_data = [self._get_seq(file, length) for file in batch_files]
         return np.array(batch_data)  # batch_size, seq_len
 
     def seq2seq_batch(self, batch_size, length, mode='train'):

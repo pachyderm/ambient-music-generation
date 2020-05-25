@@ -1,0 +1,44 @@
+####################################
+#
+# Music Transformer
+#
+####################################
+FROM tensorflow/tensorflow:2.2.0-gpu-jupyter
+ARG DEBIAN_FRONTEND=noninteractive
+ENV LANG C.UTF-8
+
+RUN apt-get update && apt-get install -y \
+  libgirepository1.0-dev gcc libcairo2-dev \
+  pkg-config gir1.2-gtk-3.0 \
+  git curl wget vim \
+  libjpeg-dev libgif-dev libpango1.0-dev libssl-dev
+RUN mkdir -p /src
+RUN git clone https://github.com/jason9693/midi-neural-processor.git \
+  && mv midi-neural-processor /src/midi_processor
+COPY MusicTransformer-tensorflow2.0/requirements.txt /src/requirements.txt
+RUN pip3 install -r /src/requirements.txt --ignore-installed
+COPY MusicTransformer-tensorflow2.0 /src
+
+######### Install Jupyter and Notebook requirements #########
+RUN pip3 install google-colab
+RUN pip3 install jupyter
+# https://github.com/jupyter/jupyter_console/issues/163#issuecomment-418392676
+RUN pip3 install --upgrade ipykernel
+RUN pip3 install tensor2tensor prompt-toolkit
+
+RUN pip uninstall -y tensorflow-gpu
+RUN pip install tensorflow-gpu==2.2.0
+# Magenta runs an old version of bokeh
+# RUN pip uninstall bokeh -y
+# RUN pip3 install bokeh==1.4.0
+
+######### Set up file system #########
+RUN mkdir -p /notebooks && chmod a+rwx /notebooks
+RUN mkdir -p /logs && chmod 777 /logs
+RUN mkdir -p /.local && chmod a+rwx /.local
+WORKDIR /notebooks
+EXPOSE 8888
+COPY jupyter_notebook_config.py /root/.jupyter/jupyter_notebook_config.py
+
+######### Run Jupyter notebook #########
+CMD ["bash", "-c", "jupyter notebook --ip 0.0.0.0 --allow-root --no-browser"]

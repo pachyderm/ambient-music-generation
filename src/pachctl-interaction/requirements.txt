@@ -1,0 +1,6 @@
+grpcio==1.29.0
+pkg-resources==0.0.0
+protobuf==3.12.1
+python-pachyderm==4.1.0
+six==1.15.0
+tqdm==4.46.0
