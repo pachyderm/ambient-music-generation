@@ -20,7 +20,6 @@ def listFiles(repo):
 
 def getFile(repo, file, out):
     cmd = ['pachctl', 'get', 'file', '{repo}@master:{file}'.format(repo=repo,file=file), '-o', out]
-    print(cmd)
     command(cmd)
 
 def getFiles(repo, out):

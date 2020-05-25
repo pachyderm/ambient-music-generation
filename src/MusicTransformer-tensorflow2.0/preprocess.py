@@ -1,3 +1,4 @@
+print('preprocess.py')
 import pickle
 import os
 import re
@@ -31,7 +32,7 @@ def preprocess_midi_files_under_original(midi_root, save_dir):
     out_fmt = '{}-{}.data'
 
     for path in tqdm(midi_paths, desc='MIDI Paths in {}'.format(midi_root)):
-        print(' ', end='[{}]'.format(path), flush=True)
+        # print(' ', end='[{}]'.format(path), flush=True)
 
         try:
             data = preprocess_midi_original(path)
