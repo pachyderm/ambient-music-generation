@@ -1,0 +1,23 @@
+{
+  "pipeline": {
+    "name": "test-transcription"
+  },
+  "description": "A pipeline that performs midi transcription using Magenta's Onsets and Frames",
+  "transform": {
+    "cmd": [
+      "python3",
+      "/src/transcribe.py",
+      "--input",
+      "/pfs/audio-processed-wav",
+      "--output",
+      "/pfs/out"
+    ],
+    "image": "hitheory/onsets-and-frames:v1.0"
+  },
+  "input": {
+    "pfs": {
+      "repo": "audio-processed-wav",
+      "glob": "/*"
+    }
+  }
+}

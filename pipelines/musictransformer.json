@@ -1,0 +1,35 @@
+{
+  "pipeline": {
+    "name": "test-musictransformer"
+  },
+  "transform": {
+    "image": "hitheory/musictransformer:v1.0.0",
+    "cmd": [
+      "python3",
+      "/src/train.py",
+      "--epochs",
+      "500",
+      "--save_path",
+      "/pfs/out",
+      "--input_path",
+      "/pfs/transformer-preprocess",
+      "--batch_size",
+      "2",
+      "--max_seq",
+      "2048"
+    ]
+  },
+  "resource_limits": {
+    "memory": "14336M",
+    "gpu": {
+      "type": "nvidia.com/gpu",
+      "number": 1
+    }
+  },
+  "input": {
+    "pfs": {
+      "repo": "transformer-preprocess",
+      "glob": "/"
+    }
+  }
+}

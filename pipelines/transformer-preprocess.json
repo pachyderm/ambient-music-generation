@@ -1,0 +1,20 @@
+{
+  "pipeline": {
+    "name": "test-transformer-preprocess"
+  },
+  "transform": {
+    "image": "hitheory/musictransformer:v1.0.0",
+    "cmd": [
+      "python3",
+      "/src/preprocess.py",
+      "/pfs/midi",
+      "/pfs/out"
+    ]
+  },
+  "input": {
+    "pfs": {
+      "repo": "midi",
+      "glob": "/"
+    }
+  }
+}
