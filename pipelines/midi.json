@@ -8,7 +8,7 @@
       "python3",
       "/src/transcribe.py",
       "--input",
-      "/pfs/audio-processed-wav",
+      "/pfs/dev-audio-processed-wav",
       "--output",
       "/pfs/out"
     ],
@@ -16,7 +16,7 @@
   },
   "input": {
     "pfs": {
-      "repo": "audio-processed-wav",
+      "repo": "dev-audio-processed-wav",
       "glob": "/*"
     }
   }
