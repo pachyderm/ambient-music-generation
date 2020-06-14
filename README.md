@@ -1,5 +1,11 @@
 # Ambient Music Generation
 
+The below describes three pipelines:
+
+* Transcription
+* Pre-processing data
+* Training
+
 ## Transcription
 
 This stage of the pipeline transcribes incoming `.wav` files into `.midi` files.
