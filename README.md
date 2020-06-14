@@ -12,11 +12,15 @@ This stage of the pipeline transcribes incoming `.wav` files into `.midi` files.
 
 The container installs and sets up Magenta's [Onsets & Frames](https://github.com/magenta/magenta/tree/master/magenta/models/onsets_frames_transcription#training). It clones [this repo](https://github.com/thekevinscott/onsets-and-frames-transcription) to orchestrate the reading of files and transcription.
 
-*Container:* [`hitheory/onsets-and-frames:v1.0`](https://hub.docker.com/repository/docker/hitheory/musictransformer)
-*Dockerfile:* [`dockerfiles/onsets-and-frames.Dockerfile`](dockerfiles/onsets-and-frames.Dockerfile)
-*Pipeline JSON:* [`pipelines/midi.json`](pipelines/midi.json)
-*Entry script:* [`/src/transcribe.py`](https://github.com/thekevinscott/onsets-and-frames-transcription/blob/master/transcribe.py)
-*Arguments:*
+**Container:** [`hitheory/onsets-and-frames:v1.0`](https://hub.docker.com/repository/docker/hitheory/musictransformer)
+
+**Dockerfile:** [`dockerfiles/onsets-and-frames.Dockerfile`](dockerfiles/onsets-and-frames.Dockerfile)
+
+**Pipeline JSON:** [`pipelines/midi.json`](pipelines/midi.json)
+
+**Entry script:** [`/src/transcribe.py`](https://github.com/thekevinscott/onsets-and-frames-transcription/blob/master/transcribe.py)
+
+**Arguments:**
 * `--input` - the directory containing the input files
 * `--output` - the directory in which to write the MIDI files
 
