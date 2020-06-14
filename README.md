@@ -36,11 +36,15 @@ Before training the model, the data must be pre-processed. Specifically, the MID
 
 We rely on [a fork of an implementation](https://github.com/thekevinscott/MusicTransformer-tensorflow2.0) of MusicTransformer by [@jason9693](https://github.com/jason9693).
 
-*Container:* [`hitheory/musictranformer:v1.0.0`](https://hub.docker.com/repository/docker/hitheory/musictransformer)
-*Dockerfile:* [`dockerfiles/musictransformer.Dockerfile`](dockerfiles/musictransformer.Dockerfile)
-*Pipeline JSON:* [`pipelines/transformer-preprocess.json`](pipelines/transformer-preprocess.json)
-*Entry script:* [`/src/preprocess.py`](https://github.com/thekevinscott/MusicTransformer-tensorflow2.0/blob/master/preprocess.py)
-*Arguments:*
+**Container:** [`hitheory/musictranformer:v1.0.0`](https://hub.docker.com/repository/docker/hitheory/musictransformer)
+
+**Dockerfile:** [`dockerfiles/musictransformer.Dockerfile`](dockerfiles/musictransformer.Dockerfile)
+
+**Pipeline JSON:** [`pipelines/transformer-preprocess.json`](pipelines/transformer-preprocess.json)
+
+**Entry script:** [`/src/preprocess.py`](https://github.com/thekevinscott/MusicTransformer-tensorflow2.0/blob/master/preprocess.py)
+
+**Arguments:**
 * `<first arg>` - the directory containing the input files to pre-process
 * `<second arg>` - the directory in which to write the pre-processed files
 
@@ -56,11 +60,15 @@ Finally, we train on the TFRecord files.
 
 We rely on [the same fork of an implementation](https://github.com/thekevinscott/MusicTransformer-tensorflow2.0) of MusicTransformer by [@jason9693](https://github.com/jason9693), and use the same container and Dockerfile.
 
-*Container:* [`hitheory/musictranformer:v1.0.0`](https://hub.docker.com/repository/docker/hitheory/musictransformer)
-*Dockerfile:* [`dockerfiles/musictransformer.Dockerfile`](dockerfiles/musictransformer.Dockerfile)
-*Pipeline JSON:* [`pipelines/musictransformer.json`](pipelines/musictransformer.json)
-*Entry script:* [`/src/preprocess.py`](https://github.com/thekevinscott/MusicTransformer-tensorflow2.0/blob/master/train.py)
-*Arguments:*
+**Container:** [`hitheory/musictranformer:v1.0.0`](https://hub.docker.com/repository/docker/hitheory/musictransformer)
+
+**Dockerfile:** [`dockerfiles/musictransformer.Dockerfile`](dockerfiles/musictransformer.Dockerfile)
+
+**Pipeline JSON:** [`pipelines/musictransformer.json`](pipelines/musictransformer.json)
+
+**Entry script:** [`/src/preprocess.py`](https://github.com/thekevinscott/MusicTransformer-tensorflow2.0/blob/master/train.py)
+
+**Arguments:**
 * `--l_r` - The learning rate to use. If `None`, [a custom learning rate is used, as defined in the original repo](https://github.com/thekevinscott/MusicTransformer-tensorflow2.0#hyper-parameter).
 * `--batch_size` - The batch size to use
 * `--max_seq` - The sequence length to use ([more information in the paper](https://arxiv.org/pdf/1809.04281.pdf)).
