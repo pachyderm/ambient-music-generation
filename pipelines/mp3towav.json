@@ -1,0 +1,17 @@
+# mp3towav.json
+{
+  "pipeline": {
+    "name": "audio-processed-wav"
+  },
+  "description": "A pipeline that converts MP3s to WAVs with ffmpeg.",
+  "transform": {
+    "cmd": [ "bash", "/ffmpeg-convert-pachy.sh" ],
+    "image": "rabbit37/audio-preprocessor:v5"
+  },
+  "input": {
+    "pfs": {
+      "repo": "audio-unprocessed",
+      "glob": "/*"
+    }
+  }
+}
