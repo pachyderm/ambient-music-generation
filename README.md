@@ -116,15 +116,15 @@ If you want to take this project farther then consider exploring different music
 
     pachctl create pipeline -f ./midi.json
 
-The container installs and sets up Magenta's [Onsets & Frames](https://github.com/magenta/magenta/tree/master/magenta/models/onsets_frames_transcription). It relies on [this repo](https://github.com/thekevinscott/onsets-and-frames-transcription) to orchestrate the reading of files and transcription.
+The container installs and sets up Magenta's [Onsets & Frames](https://github.com/magenta/magenta/tree/master/magenta/models/onsets_frames_transcription). It relies on [this repo](https://github.com/the-laughing-monkey/onsets-and-frames-transcription) to orchestrate the reading of files and transcription.
 
 **Container:** [`hitheory/onsets-and-frames:v1.0`](https://hub.docker.com/repository/docker/hitheory/musictransformer)
 
-**Dockerfile:** [`dockerfiles/onsets-and-frames.Dockerfile`](https://github.com/thekevinscott/ambient-music-generation/blob/master/dockerfiles/onsets-and-frames.Dockerfile)
+**Dockerfile:** [`dockerfiles/onsets-and-frames.Dockerfile`](dockerfiles/onsets-and-frames.Dockerfile)
 
-**Pipeline JSON:** [`pipelines/midi.json`](https://github.com/thekevinscott/ambient-music-generation/blob/master/pipelines/midi.json)
+**Pipeline JSON:** [`pipelines/midi.json`](pipelines/midi.json)
 
-**Entry script:** [`/src/transcribe.py`](https://github.com/thekevinscott/onsets-and-frames-transcription/blob/master/transcribe.py)
+**Entry script:** [`/src/transcribe.py`](https://github.com/the-laughing-monkey/onsets-and-frames-transcription/blob/master/transcribe.py)
 
 **Arguments:**
 
@@ -144,15 +144,15 @@ Before training the model, we need to do one more step. We’ve got to convert t
 
     pachctl create pipeline -f ./transformer-preprocess.json
 
-We rely on [a fork of an implementation](https://github.com/thekevinscott/MusicTransformer-tensorflow2.0) of MusicTransformer by [@jason9693](https://github.com/jason9693).
+We rely on [a fork of an implementation](https://github.com/the-laughing-monkey/MusicTransformer-tensorflow2.0) of MusicTransformer by [@jason9693](https://github.com/jason9693).
 
 **Container:** [`hitheory/musictranformer:v1.0.0`](https://hub.docker.com/repository/docker/hitheory/musictransformer)
 
-**Dockerfile:** [`dockerfiles/musictransformer.Dockerfile`](https://github.com/thekevinscott/ambient-music-generation/blob/master/dockerfiles/musictransformer.Dockerfile)
+**Dockerfile:** [`dockerfiles/musictransformer.Dockerfile`](dockerfiles/musictransformer.Dockerfile)
 
-**Pipeline JSON:** [`pipelines/transformer-preprocess.json`](https://github.com/thekevinscott/ambient-music-generation/blob/master/pipelines/transformer-preprocess.json)
+**Pipeline JSON:** [`pipelines/transformer-preprocess.json`](pipelines/transformer-preprocess.json)
 
-**Entry script:** [`/src/preprocess.py`](https://github.com/thekevinscott/MusicTransformer-tensorflow2.0/blob/master/preprocess.py)
+**Entry script:** [`/src/preprocess.py`](https://github.com/the-laughing-monkey/MusicTransformer-tensorflow2.0/blob/master/preprocess.py)
 
 **Arguments:**
 
@@ -174,25 +174,25 @@ The [training JSON file is right here](pipelines/musictransformer.json) and you 
 
     pachctl create pipeline -f ./transformer.json
 
-We rely on [the same fork of an implementation](https://github.com/thekevinscott/MusicTransformer-tensorflow2.0) of MusicTransformer by [@jason9693](https://github.com/jason9693), and use the same container and Dockerfile.
+We rely on [the same fork of an implementation](https://github.com/the-laughing-monkey/MusicTransformer-tensorflow2.0) of MusicTransformer by [@jason9693](https://github.com/jason9693), and use the same container and Dockerfile.
 
 **Container:** [`hitheory/musictranformer:v1.0.0`](https://hub.docker.com/repository/docker/hitheory/musictransformer)
 
-**Dockerfile:** [`dockerfiles/musictransformer.Dockerfile`](https://github.com/thekevinscott/ambient-music-generation/blob/master/dockerfiles/musictransformer.Dockerfile)
+**Dockerfile:** [`dockerfiles/musictransformer.Dockerfile`](dockerfiles/musictransformer.Dockerfile)
 
-**Pipeline JSON:** [`pipelines/musictransformer.json`](https://github.com/thekevinscott/ambient-music-generation/blob/master/pipelines/musictransformer.json)
+**Pipeline JSON:** [`pipelines/musictransformer.json`](pipelines/musictransformer.json)
 
-**Entry script:** [`/src/preprocess.py`](https://github.com/thekevinscott/MusicTransformer-tensorflow2.0/blob/master/train.py)
+**Entry script:** [`/src/preprocess.py`](https://github.com/the-laughing-monkey/MusicTransformer-tensorflow2.0/blob/master/train.py)
 
 **Arguments:**
 
--   `--l_r` - The learning rate to use. If `None`, [a custom learning rate is used, as defined in the original repo](https://github.com/thekevinscott/MusicTransformer-tensorflow2.0#hyper-parameter).
+-   `--l_r` - The learning rate to use. If `None`, [a custom learning rate is used, as defined in the original repo](https://github.com/the-laughing-monkey/MusicTransformer-tensorflow2.0#hyper-parameter).
 -   `--batch_size` - The batch size to use
 -   `--max_seq` - The sequence length to use ([more information in the paper](https://arxiv.org/pdf/1809.04281.pdf)).
 -   `--epochs` - The number of epochs to use
 -   `--input_path` - The directory containing the files to use for training
 -   `--save_path` - The directory in which to write the trained model
--   `--num_layers` - [The number of layers to use](https://github.com/thekevinscott/MusicTransformer-tensorflow2.0/blob/master/model.py#L15).
+-   `--num_layers` - [The number of layers to use](https://github.com/the-laughing-monkey/MusicTransformer-tensorflow2.0/blob/master/model.py#L15).
 
 Example:
 
