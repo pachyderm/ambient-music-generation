@@ -268,9 +268,18 @@ Edit this line to change the seed file to point to the one that you copied into 
 
     inputs = encode_midi('/src/audio/midi-transcriptions/1.mid')
 
- Now you a ready to tell Music Transformer to create another new song.
+Change it to this (or whatever you named your MIDI file):
 
-It will take a few minutes, depending on how long you asked it to create. It can’t create sequences longer than 2048. It can create shorter tunes but I’ve found the longer ones more amazing because they have a consistent structure throughout the entire song, something a 10 second sample just can’t capture.
+    inputs = encode_midi('/src/audio/midi-transcriptions/leandrofresco-cuando-el-sol-grita-la-mananga.mid')
+
+
+Now you're ready to tell Music Transformer to create another new song.
+
+
+    python generate.py --load_path=/src/music-transformer-model --length=2048 --save_path=/src/generated-audio/my-sample-song-2.mid
+
+
+It will take a few minutes, depending on how long of a song you asked it to create. It can’t create sequences longer than 2048. It can create shorter tunes but I’ve found the longer ones more amazing because they have a consistent structure throughout the entire song, something a 10 second sample just can’t capture.
 
 ### Step Seven: Playing Your Song
 
