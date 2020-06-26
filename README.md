@@ -1,5 +1,7 @@
 
-We used [Pachyderm](https://docs.pachyderm.com/latest/getting_started/beginner_tutorial/) to build our [Magenta Project Music Transformer](https://magenta.tensorflow.org/music-transformer) machine learning pipeline. Pachyderm makes it supremely simple to string together a bunch of loosely coupled frameworks into a smoothly scaling AI generating machine. If you can package up your program in a Docker container you can easily run it in Pachyderm.
+To build our **ambient music generating** machine learning pipeline, we used [Pachyderm](https://docs.pachyderm.com/latest/getting_started/beginner_tutorial/) and the [Magenta Project Music Transformer](https://magenta.tensorflow.org/music-transformer). 
+
+Pachyderm makes it supremely simple to string together a bunch of loosely coupled frameworks into a smoothly scaling AI training platform. If you can package up your program in a Docker container you can easily run it in Pachyderm.
 
 In this section I walk through how to recreate the entire pipeline and train the model yourself. But you don’t have to do that if you don’t want to do it.
 
