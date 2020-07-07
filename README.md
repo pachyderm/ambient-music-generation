@@ -1,4 +1,5 @@
 
+
 To build our **ambient music generating** machine learning pipeline, we used [Pachyderm](https://docs.pachyderm.com/latest/getting_started/beginner_tutorial/) and the [Magenta Project Music Transformer](https://magenta.tensorflow.org/music-transformer). 
 
 Pachyderm makes it supremely simple to string together a bunch of loosely coupled frameworks into a smoothly scaling AI training platform. If you can package up your program in a Docker container you can easily run it in Pachyderm.
@@ -247,8 +248,11 @@ If you want to try one of the others then simply edit the `generator.py` file an
 
 Then run the script again.  Be sure to change the `--save_path` name or you will overwrite the last file!  It will put generated MIDI files in `/src/generated-audio/`.
 
+You can pull the MIDI file out of your container to your local `/tmp` directory with the following command (run in a *local* terminal NOT your docker container terminal):
+
+    docker cp magical_cannon:/src/audio/midi-transcriptions/my-sample-song-2.mid /tmp/
+
 If you want to add your own MIDI seed then you can do the following.  Let's say you wanted to have the Music Transformer generate a model with Cuando el Sol Grita la Mañana, by Leandro Fresco as the seed, you’d put the file into the container like this:
- 
 
     docker cp leandrofresco-cuando-el-sol-grita-la-mananga.mid magical_cannon:/src/audio/midi-transcriptions/
 
@@ -272,12 +276,9 @@ Change it to this (or whatever you named your MIDI file):
 
     inputs = encode_midi('/src/audio/midi-transcriptions/leandrofresco-cuando-el-sol-grita-la-mananga.mid')
 
-
 Now you're ready to tell Music Transformer to create another new song.
 
-
     python generate.py --load_path=/src/music-transformer-model --length=2048 --save_path=/src/generated-audio/my-sample-song-2.mid
-
 
 It will take a few minutes, depending on how long of a song you asked it to create. It can’t create sequences longer than 2048. It can create shorter tunes but I’ve found the longer ones more amazing because they have a consistent structure throughout the entire song, something a 10 second sample just can’t capture.
 
@@ -291,9 +292,9 @@ Different instruments create very different songs. If you play your MIDI through
 
 But pick the right ambient instrument and you might just have musical magic at your fingertips.
 
-Of course, you could automate this step but you’ll need to find a rich collection of open source software instruments. They’re out there, but if you have a Mac you already have a rich collection of software instruments in [Apple’s Logic Pro](https://www.apple.com/logic-pro/). That felt like the best place to start so I could try lots of iterations fast. If you don’t own Logic Pro you can install a 60 day trial version from [the Mac Store](https://apps.apple.com/us/app/logic-pro-x/id634148309?mt=12) that is fully featured and not crippleware.
+Of course, you could automate this step but you’ll need to find a rich collection of open source software instruments. They’re out there, but if you have a Mac you already have a rich collection of software instruments in [Apple’s Logic Pro](https://www.apple.com/logic-pro/). That felt like the best place to start so I could try lots of iterations fast. If you don’t own Logic Pro you can install a 60 day trial version from [the Mac Store](https://apps.apple.com/us/app/logic-pro-x/id634148309?mt=12) that is fully featured and not crippleware.  
 
-If you don’t want to use Logic Pro, there’s lots of amazing music creation software to choose from, like Abelton Live and Cuebase. If you’re a musical magician then go wild and unleash your favorite software collection on those AI generated songs.
+If you don’t want to use Logic Pro, there’s lots of amazing music creation software to choose from, like Abelton Live and Cuebase.  You can also use Apple's free [Garageband](https://www.apple.com/mac/garageband/) by installing it from the app store.  If you’re a musical magician then go wild and unleash your favorite software collection on those AI generated songs.
 
 But if you’re using Logic Pro like me, then you just import the MIDI and change out the instrument in the software track.
 
