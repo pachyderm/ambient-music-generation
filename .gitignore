@@ -2,3 +2,5 @@ node_modules
 .DS_Store
 tmp
 .ipynb_checkpoints
+audio-processed
+audio-unprocessed

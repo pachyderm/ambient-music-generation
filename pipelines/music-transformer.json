@@ -1,6 +1,6 @@
 {
   "pipeline": {
-    "name": "test-musictransformer"
+    "name": "music-transformer"
   },
   "transform": {
     "image": "hitheory/musictransformer:v1.0.0",

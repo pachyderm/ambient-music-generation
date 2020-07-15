@@ -1,6 +1,6 @@
 {
   "pipeline": {
-    "name": "test-transformer-preprocess"
+    "name": "transformer-preprocess"
   },
   "transform": {
     "image": "hitheory/musictransformer:v1.0.0",
