@@ -34,13 +34,13 @@ You should see something like this:
 generating |##                              | 182/2048
 ```
 
-What just happened? The generation function inside the container was called and began generating a song given a default "seed" file with the pre-trained music generator model. 
+What just happened? We started a docker container with all the code and files to generate an song. When the container starts it maps the present working directory (``--v `pwd`:data``) to `/data` into the container. This is also where the generated song is saved. The container then generates a song with our pre-trained ambient music generation model.
 
-The seed gives the model a starting point for style. We've already included 7 midi seeds (named `1.mid` - `7.mid`) for you in the docker container in the directory `/src/audio/midi-transcriptions`. You can change them by changing the `--inputs` flag to point at a different file (e.g. `--inputs /src/audio/midi-transcriptions/2.mid`).
+A seed is passed to the generator to give the model a starting point for style. We've already included 7 midi seeds (named `1.mid` - `7.mid`) for you in the docker container in the directory `/src/audio/midi-transcriptions`. You can change them by changing the `--inputs` flag to point at a different file (e.g. `--inputs /src/audio/midi-transcriptions/2.mid`).
 
 Music Transformer will try to predict a good sequence in the style of that original song and deliver something brand new and never before heard by gods or mankind. 
 
-Be sure to change the `--save_path` for different name or you will overwrite the last file!  We are mapping in the present working directory (`pwd`) to `/data` when we start the container. This is also where we are saving the files. 
+Be sure to change the `--save_path` for different name or you will overwrite the last file!  
 
 If you want to add your own MIDI seed then you can do the following.  Let's say you wanted to have the Music Transformer generate a model with Cuando el Sol Grita la Mañana, by Leandro Fresco as the seed, you’d put the file into the current directory and change the input name:
 
