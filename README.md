@@ -7,8 +7,18 @@ Pachyderm makes it supremely simple to string together a bunch of loosely couple
 - [Generating Songs](#generating-songs)
   - [Requirements](#requirements)
 - [Playing Your Song](#playing-your-song)
-- [Training Your Own Generator in Pachyderm](#training-your-own-music-generator-in-pachyderm)
-  - [Requirements](#training-requirements)
+- [Training Your Own Music Generator in Pachyderm](#training-your-own-music-generator-in-pachyderm)
+  - [Training Requirements](#training-requirements)
+  - [TLDR; Just give me the code!](#tldr-just-give-me-the-code)
+  - [Step 1: Download Your Data](#step-1-download-your-data)
+  - [Step 2: Get Pachyderm Running](#step-2-get-pachyderm-running)
+  - [Step 3: Clean Your Data](#step-3-clean-your-data)
+  - [Step 4: Convert MP3s to Waves](#step-4-convert-mp3s-to-waves)
+  - [Step 5: Converting WAVs to MIDI](#step-5-converting-wavs-to-midi)
+  - [Step 6: MIDI to TFRecord](#step-6-midi-to-tfrecord)
+  - [Step 7: Train the Transformer](#step-7-train-the-transformer)
+  - [Step 8: Download the transformer model](#step-8-download-the-transformer-model)
+
 
 ## Generating Songs
 In this repo, I've included a fully trained model you can download right here and try out yourself. Additionally, I included a Docker container with the fully trained model so you can start making music fast.
@@ -108,44 +118,57 @@ In this section, I walk through how to recreate the entire pipeline and train th
 
 ![Pachyderm screenshot](images/pachhub_screenshot.png)
 
-### Training Requirements
-TODO
+I used Pachyderm to handle the full pipeline for scaling and management. Pachyderm is really unique because it will automatically run the rest of the pipeline and retrain your model when you add (or remove) data. This is super handy when you're still in the process of selecting your training data or if you want to try different styles of music without having to re-run scripts - just upload the data and everything is done. 
 
-We’ve included all the containers and JSON you’ll need to build a complete end-to-end ML pipeline right here. There’s no need to spend time compiling your own containers. We did the hard work for you.
+### Training Requirements
+You can deploy a cluster on [PacHub](hub.pachyderm.com) which we did or deploy locally as described here:
+
+- [Pachyderm Getting Started](https://docs.pachyderm.com/latest/getting_started/)
+
+Once everything is up, we can check the setup by running: 
+1. `kubectl get all` to ensure all the pods are up. 
+2. `pachctl version` which will show both the `pachctl` and `pachd` versions.
+
+We’ve included all the containers and JSON you’ll need to build a complete end-to-end ML pipeline right here. There’s no need to spend time compiling your own containers. We did the hard work for you!
+
+Let's take a look at what it took to train this Transforming monster.
+
+Our ML pipeline had eight stages.
+1. [Download Your Data](#step-1-download-your-data)
+2. [Get Pachyderm Running](#step-2-get-pachyderm-running) 
+3. [Clean Your Data](#step-3-clean-your-data)
+4. [Convert MP3s to Waves](#step-4-convert-mp3s-to-waves)
+5. [Converting WAVs to MIDI](#step-5-converting-wavs-to-midi)
+6. [MIDI to TFRecord](#step-6-midi-to-tfrecord)
+7. [Train the Transformer](#step-7-train-the-transformer)
+8. [Download the transformer model](#step-8-download-the-transformer-model)
+    
+The first step was manual but you can automate it pretty simply. But since we you only have to download the dataset once there didn’t seem to be any reason to script that step.
 
 ### TLDR; Just give me the code!
 
 ```bash
 # Once Pachyderm is set up, run the following:
+pachctl create repo audio-unprocessed
+
+### Clean Your Data
 mkdir audio-unprocessed # move downloaded mp3 files here
 mkdir audio-processed
 ./scripts/name-standarizer.sh # standardizes and uploads your data to pachyderm
+
+# Convert MP3s to Waves
 cd pipelines/
 pachctl create pipeline -f ./mp3-to-wav.json 
+
+# Converting WAVs to MIDI
 pachctl create pipeline -f ./midi.json 
+
+# MIDI to TFRecord
 pachctl create pipeline -f ./transformer-preprocess.json
+
+# Train the Transformer
 pachctl create pipeline -f ./music-transformer.json
 ```
-
-Let's take a look at what it took to train this Transforming monster.
-
-Our ML pipeline had seven stages.
-
-1.  Download our dataset to MP3s
-    
-2.  Convert those MP3s to Waves
-    
-3.  Transcribe those Waves into Midi
-    
-4.  Preprocess those Midi files
-    
-5.  Train our ML model on GPUs
-    
-6.  Output AI generated songs in Midi with our trained model
-    
-7.  Play those Midi files in software instruments
-    
-The first step was manual but you can automate it pretty simply. But since we you only have to download the dataset once there didn’t seem to be any reason to script that step.
 
 ### Step 1: Download Your Data
 
@@ -255,7 +278,7 @@ python3 /src/transcribe.py --input /pfs/audio-processed-wav --output /pfs/out
 
 ```
 
-### Step 6: Preprocessing
+### Step 6: MIDI to TFRecord
 
 Before training the model, we need to do one more step. We’ve got to convert those MIDI files into a format TensorFlow can understand, called the TFRecord format. The [JSON is here](pipelines/transformer-preprocess.json), and we push it with the following command:
 
@@ -316,4 +339,11 @@ Example:
 ```
 python3 /src/train.py --epochs 500 --save_path /pfs/out --input_path /pfs/transformer-preprecess --batch_size 2 --max_seq 2048
 
+```
+
+### Step 8: Download the transformer model
+Once the model is finished training, we can download it from pachyderm by running the following: 
+```bash
+pachctl list file music-transformer@master 
+pachctl get file --recursive music-transformer@master
 ```
