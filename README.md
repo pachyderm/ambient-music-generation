@@ -28,11 +28,11 @@ Make sure you have [Docker Desktop](https://www.docker.com/get-started) installe
 
 Pull down the Ambient Music Transformer container to get started.
 
-    docker pull rabbit37/ambient-musictransformer:v1
+    docker pull jimmywhitaker/music-transformer:0.1
 
 Launch the container and generate a song (with the defaults):
 
-    docker run -it -v `pwd`:/data --entrypoint /bin/python rabbit37/ambient-musictransformer:v1 generate.py --load_path=/src/music-transformer-model --inputs /src/audio/midi-transcriptions/1.mid --length=2048 --save_path=/data/my-sample-song-1.mid
+    docker run -it -v `pwd`:/data --entrypoint python jimmywhitaker/music-transformer:0.1 generate.py --load_path=/data/trained-models/ambient-musictransformer-model-2-june-3-2020-750-epochs-more-data --inputs /data/samples/midi/1.mid --length=2048 --save_path=/data/generated-music/my-sample-song-1.mid
 
 You should see something like this: 
 ```
@@ -44,17 +44,17 @@ You should see something like this:
 generating |##                              | 182/2048
 ```
 
-What just happened? We started a docker container with all the code and files to generate an song. When the container starts it maps the present working directory (``--v `pwd`:data``) to `/data` into the container. This is also where the generated song is saved. The container then generates a song with our pre-trained ambient music generation model.
+What just happened? We started a docker container with all the code and files to generate an song. When the container starts it maps the present working directory (``--v `pwd`:data``) to `/data` so that we have access to our local directory. The container then generates a song with our pre-trained ambient music generation model.
 
-A seed is passed to the generator to give the model a starting point for style. We've already included 7 midi seeds (named `1.mid` - `7.mid`) for you in the docker container in the directory `/src/audio/midi-transcriptions`. You can change them by changing the `--inputs` flag to point at a different file (e.g. `--inputs /src/audio/midi-transcriptions/2.mid`).
+A seed is passed to the generator to give the model a starting point for style. We've already included 7 midi seeds in [``samples/midi``](samples/midi). You can change them by changing the `--inputs` flag to point at a different file (e.g. `--inputs /data/samples/midi/2.mid`).
 
 Music Transformer will try to predict a good sequence in the style of that original song and deliver something brand new and never before heard by gods or mankind. 
 
 Be sure to change the `--save_path` for different name or you will overwrite the last file!  
 
-If you want to add your own MIDI seed then you can do the following.  Let's say you wanted to have the Music Transformer generate a model with Cuando el Sol Grita la Mañana, by Leandro Fresco as the seed, you’d put the file into the current directory and change the input name:
+If you want to add your own MIDI seed then you can do the following.  Let's say you wanted to have the Music Transformer generate a model with Cuando el Sol Grita la Mañana, by Leandro Fresco as the seed, you’d put the file into the [``samples/midi``](samples/midi) and change the run command to:
 
-    docker run -it -v `pwd`:/data --entrypoint /bin/python rabbit37/ambient-musictransformer:v1 generate.py --load_path=/src/music-transformer-model --inputs /data/leandrofresco-cuando-el-sol-grita-la-mananga.mid --length=2048 --save_path=/data/my-sample-song-3.mid
+    docker run -it -v `pwd`:/data --entrypoint /bin/python jimmywhitaker/music-transformer:0.1 generate.py --load_path=/src/music-transformer-model --inputs /data/samples/midi/leandrofresco-cuando-el-sol-grita-la-mananga.mid --length=2048 --save_path=/data/generated-music/my-sample-song-3.mid
 
 It will take a few minutes, depending on how long of a song you asked it to create. It can’t create sequences longer than 2048. It can create shorter tunes but I’ve found the longer ones more amazing because they have a consistent structure throughout the entire song, something a 10 second sample just can’t capture.
 
