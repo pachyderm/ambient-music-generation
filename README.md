@@ -20,77 +20,37 @@ Pull down the Ambient Music Transformer container to get started.
 
     docker pull rabbit37/ambient-musictransformer:v1
 
-Launch an instance of the container with the following command:
+Launch the container and generate a song (with the defaults):
 
-    docker run -dit rabbit37/ambient-music-transformer:v1
+    docker run -it -v `pwd`:/data --entrypoint /bin/python rabbit37/ambient-musictransformer:v1 generate.py --load_path=/src/music-transformer-model --inputs /src/audio/midi-transcriptions/1.mid --length=2048 --save_path=/data/my-sample-song-1.mid
 
-Give it second to start and then get the instance name of that container so you can talk to it:
+You should see something like this: 
+```
+2020-07-16 01:12:09.048700: I tensorflow/core/platform/cpu_feature_guard.cc:143] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+2020-07-16 01:12:09.063616: I tensorflow/core/platform/profile_utils/cpu_utils.cc:102] CPU Frequency: 3504000000 Hz
+2020-07-16 01:12:09.063934: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x7f3160000b20 initialized for platform Host (this does not guarantee that XLA will be used). Devices:
+2020-07-16 01:12:09.064158: I tensorflow/compiler/xla/service/service.cc:176]   StreamExecutor device (0): Host, Default Version
+>> generate with decoder wise... beam size is None
+generating |##                              | 182/2048
+```
 
-     docker ps | grep ambient-musictransformer
+What just happened? The generation function inside the container was called and began generating a song given a default "seed" file with the pre-trained music generator model. 
 
-Let’s pretend it was called `magical_cannon`. Now you can talk to that instance by its funny little name.
-
-You'll need a MIDI file to “seed" the model. The seed gives the model a starting point for style. We've already included 7 midi seeds for you in the directory `/src/audio/midi-transcriptions`
-
- - 1.mid
- - 2.mid
- - 3.mid
- - 4.mid
- - 5.mid
- - 6.mid
- - 7.mid
+The seed gives the model a starting point for style. We've already included 7 midi seeds (named `1.mid` - `7.mid`) for you in the docker container in the directory `/src/audio/midi-transcriptions`. You can change them by changing the `--inputs` flag to point at a different file (e.g. `--inputs /src/audio/midi-transcriptions/2.mid`).
 
 Music Transformer will try to predict a good sequence in the style of that original song and deliver something brand new and never before heard by gods or mankind. 
 
-Then you tell Music Transformer to create a song like this:
+Be sure to change the `--save_path` for different name or you will overwrite the last file!  We are mapping in the present working directory (`pwd`) to `/data` when we start the container. This is also where we are saving the files. 
 
-    python generate.py --load_path=/src/music-transformer-model --length=2048 --save_path=/src/generated-audio/my-sample-song-1.mid
+If you want to add your own MIDI seed then you can do the following.  Let's say you wanted to have the Music Transformer generate a model with Cuando el Sol Grita la Mañana, by Leandro Fresco as the seed, you’d put the file into the current directory and change the input name:
 
-I've already configured the generator.py script with the 1.mid file for you.  Feel free to try the others or add your own!
-
-If you want to try one of the others then simply edit the `generator.py` file and find the following line:
-
-    inputs = encode_midi('/src/audio/midi-transcriptions/1.mid')
-
-Then run the script again.  Be sure to change the `--save_path` name or you will overwrite the last file!  It will put generated MIDI files in `/src/generated-audio/`.
-
-You can pull the MIDI file out of your container to your local `/tmp` directory with the following command (run in a *local* terminal NOT your docker container terminal):
-
-    docker cp magical_cannon:/src/audio/midi-transcriptions/my-sample-song-2.mid /tmp/
-
-If you want to add your own MIDI seed then you can do the following.  Let's say you wanted to have the Music Transformer generate a model with Cuando el Sol Grita la Mañana, by Leandro Fresco as the seed, you’d put the file into the container like this:
-
-    docker cp leandrofresco-cuando-el-sol-grita-la-mananga.mid magical_cannon:/src/audio/midi-transcriptions/
-
-That copies your MIDI file into the container’s /src/audio/midi-transcriptions/ directory.
-
-Now you can step inside your container and get it to create songs for you. You can do that like so:
-
-    docker exec -it magical_cannon /bin/bash
-
-Now you’re inside the musical machine in the `/src` directory.
-
-Edit the generator python script to change the seed file.
-
-    vi generate.py
-
-Edit this line to change the seed file to point to the one that you copied into the instance:
-
-    inputs = encode_midi('/src/audio/midi-transcriptions/1.mid')
-
-Change it to this (or whatever you named your MIDI file):
-
-    inputs = encode_midi('/src/audio/midi-transcriptions/leandrofresco-cuando-el-sol-grita-la-mananga.mid')
-
-Now you're ready to tell Music Transformer to create another new song.
-
-    python generate.py --load_path=/src/music-transformer-model --length=2048 --save_path=/src/generated-audio/my-sample-song-2.mid
+    docker run -it -v `pwd`:/data --entrypoint /bin/python rabbit37/ambient-musictransformer:v1 generate.py --load_path=/src/music-transformer-model --inputs /data/leandrofresco-cuando-el-sol-grita-la-mananga.mid --length=2048 --save_path=/data/my-sample-song-3.mid
 
 It will take a few minutes, depending on how long of a song you asked it to create. It can’t create sequences longer than 2048. It can create shorter tunes but I’ve found the longer ones more amazing because they have a consistent structure throughout the entire song, something a 10 second sample just can’t capture.
 
 ## Playing Your Song
 
-The last step is where we really bring in our human-in-the-loop creativity.
+This step is where we really bring in our human-in-the-loop creativity.
 
 We play our MIDI through various software instruments to see how it sounds. The software instruments are what bring our song to life.
 
@@ -144,7 +104,7 @@ Happy music making!
 
 ## Training Your Own Music Generator in Pachyderm
 
-In this section I walk through how to recreate the entire pipeline and train the model yourself. But you don’t have to do that if you don’t want to do it.
+In this section, I walk through how to recreate the entire pipeline and train the model yourself. But you don’t have to do that if you don’t want to do it.
 
 ![Pachyderm screenshot](images/pachhub_screenshot.png)
 
