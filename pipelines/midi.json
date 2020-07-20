@@ -1,6 +1,6 @@
 {
   "pipeline": {
-    "name": "test-transcription"
+    "name": "midi"
   },
   "description": "A pipeline that performs midi transcription using Magenta's Onsets and Frames",
   "transform": {

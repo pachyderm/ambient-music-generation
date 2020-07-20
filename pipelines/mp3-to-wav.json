@@ -1,4 +1,3 @@
-# mp3towav.json
 {
   "pipeline": {
     "name": "audio-processed-wav"
