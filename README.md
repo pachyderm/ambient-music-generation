@@ -114,7 +114,7 @@ Happy music making!
 
 ## Training Your Own Music Generator in Pachyderm
 
-In this section, I walk through how to recreate the entire pipeline and train the model yourself. But you don’t have to do that if you don’t want to do it.
+In this section, I walk through how to recreate the entire pipeline and train the model yourself. 
 
 ![Pachyderm screenshot](images/pachhub_screenshot.png)
 
