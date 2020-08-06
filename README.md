@@ -44,7 +44,7 @@ You should see something like this:
 generating |##                              | 182/2048
 ```
 
-What just happened? We started a docker container with all the code and files to generate an song. When the container starts it maps the present working directory (``--v `pwd`:data``) to `/data` so that we have access to our local directory. The container then generates a song with our pre-trained ambient music generation model.
+What just happened? We started a docker container with all the code and files to generate a song. When the container starts it maps the present working directory (``--v `pwd`:data``) to `/data` so that we have access to our local directory. The container then generates a song with our pre-trained ambient music generation model.
 
 A seed is passed to the generator to give the model a starting point for style. We've already included 7 midi seeds in [``samples/midi``](samples/midi). You can change them by changing the `--inputs` flag to point at a different file (e.g. `--inputs /data/samples/midi/2.mid`).
 
