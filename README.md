@@ -310,7 +310,7 @@ python3 /src/preprocess.py /pfs/midi /pfs/out
 
 Now we can finally unleash the power of GPUs to train our model. We used one monster Nvidia GPU, on a single node, and it took about three days running 24x7 to train, but you could use more GPUs and let [Pachyderm scale up the training for you](https://docs.pachyderm.com/latest/concepts/advanced-concepts/distributed_computing/) to train it a lot faster.
 
-The [training JSON file is right here](pipelines/musictransformer.json) and you push it like so:
+The [training JSON file is right here](pipelines/music-transformer.json) and you push it like so:
 
     pachctl create pipeline -f ./music-transformer.json
 
