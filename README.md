@@ -235,7 +235,7 @@ Here’s the JSON for stage three:
       }
     }
 
-My container runs Ubuntu and there’s a bash script in it that calls ffmpeg to convert my MP3s to WAVs. You can [grab that JSON file here](pipelines/mp3towav.json) and then push it up to the cloud with the following command:
+My container runs Ubuntu and there’s a bash script in it that calls ffmpeg to convert my MP3s to WAVs. You can [grab that JSON file here](pipelines/mp3-to-wav.json) and then push it up to the cloud with the following command:
 
 ```bash
 cd pipelines
