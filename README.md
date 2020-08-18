@@ -30,7 +30,9 @@ Pull down the Ambient Music Transformer container to get started.
 
     docker pull jimmywhitaker/music-transformer:0.1
 
-Launch the container and generate a song (with the defaults):
+Clone this Github repo and then in your terminal be sure you change to the directory where the repo lives locally.  
+
+Now launch the container and generate a song (with the defaults):
 
     docker run -it -v `pwd`:/data --entrypoint python jimmywhitaker/music-transformer:0.1 generate.py --load_path=/data/trained-models/ambient-musictransformer-model-2-june-3-2020-750-epochs-more-data --inputs /data/samples/midi/1.mid --length=2048 --save_path=/data/generated-music/my-sample-song-1.mid
 
@@ -50,7 +52,9 @@ A seed is passed to the generator to give the model a starting point for style. 
 
 Music Transformer will try to predict a good sequence in the style of that original song and deliver something brand new and never before heard by gods or mankind. 
 
-Be sure to change the `--save_path` for different name or you will overwrite the last file!  
+The model will generate your song in the sub-directory "generated-music" with the file name "my-sample-song-1.mid".
+
+If you want to generate a second song, you can run the command again but be sure to change the `--save_path` file name "my-sample-song-1.mid" to a different name or you will overwrite the last file!  
 
 If you want to add your own MIDI seed then you can do the following.  Let's say you wanted to have the Music Transformer generate a model with Cuando el Sol Grita la Mañana, by Leandro Fresco as the seed, you’d put the file into the [``samples/midi``](samples/midi) and change the run command to:
 
