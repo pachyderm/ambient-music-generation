@@ -52,9 +52,9 @@ A seed is passed to the generator to give the model a starting point for style. 
 
 Music Transformer will try to predict a good sequence in the style of that original song and deliver something brand new and never before heard by gods or mankind. 
 
-The model will generate your song in the sub-directory "generated-music" with the file name "my-sample-song-1.mid".
+The model will generate your song in the sub-directory [``generated-music``] with the file name [``my-sample-song-1.mid``].
 
-If you want to generate a second song, you can run the command again but be sure to change the `--save_path` file name "my-sample-song-1.mid" to a different name or you will overwrite the last file!  
+If you want to generate a second song, you can run the command again but be sure to change the `--save_path` file name [``my-sample-song-1.mid``] to a different name or you will overwrite the last file!  
 
 If you want to add your own MIDI seed then you can do the following.  Let's say you wanted to have the Music Transformer generate a model with Cuando el Sol Grita la Mañana, by Leandro Fresco as the seed, you’d put the file into the [``samples/midi``](samples/midi) and change the run command to:
 
